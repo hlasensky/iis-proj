@@ -1,12 +1,11 @@
 "use client";
 
-import React from 'react'
+import React from "react";
 import { signIn } from "next-auth/react";
+import { Button } from "@mantine/core";
 
 function SignInButton() {
-  return (
-    <button onClick={() => signIn()}>Sign in</button>
-)
+	return <Button variant="filled" onClick={() => signIn()}>Sign in</Button>;
 }
 
-export default SignInButton
+export default SignInButton;
