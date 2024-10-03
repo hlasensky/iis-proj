@@ -1,9 +1,14 @@
-import SignInButton from "@/components/SignInButton"
+import SignInButton from "@/components/SignInButton";
+import { getServerSession } from "next-auth";
 
-export default function Home() {
+export default async function Home() {
+	const session = await getServerSession();
+
+
 	return (
-    <main>
+		<main>
       <SignInButton />
+      {session ? <p>Authenticated</p> : <p>Not authenticated</p>}
 			<p>Hello, world!</p>
 		</main>
 	);
