@@ -1,16 +1,6 @@
 import NextAuth from "next-auth";
-import { SupabaseAdapter } from "@auth/supabase-adapter";
-import Github from "next-auth/providers/github";
+import { authOptions } from "@/utils/authOptions";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-    providers: [
-        Github({
-            clientId: process.env.GITHUB_CLIENT_ID || "",
-            clientSecret: process.env.GITHUB_CLIENT_SECRET || "",
-        }),
-    ],
-	adapter: SupabaseAdapter({
-		url: process.env.SUPABASE_URL || "",
-		secret: process.env.SUPABASE_SERVICE_ROLE_KEY || "",
-	}),
-});
+const handler = NextAuth(authOptions);
+
+export { handler as GET, handler as POST };
