@@ -2,10 +2,17 @@
 
 import React from "react";
 import { signOut } from "next-auth/react";
-import { Button } from "@mantine/core";
+import { Button, Tooltip } from "@mantine/core";
+import { LogOut } from "lucide-react";
 
 function SignOutButton() {
-	return <Button variant="filled" onClick={() => signOut()}>Sign out</Button>;
+	return (
+		<Tooltip label="Sign out" position="left">
+			<Button variant="filled" onClick={() => signOut()}>
+				<LogOut />
+			</Button>
+		</Tooltip>
+	);
 }
 
 export default SignOutButton;
