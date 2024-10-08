@@ -8,7 +8,7 @@ import { LogIn } from "lucide-react";
 function SignInButton() {
 	return (
 		<Tooltip label="Sign in" position="left">
-			<Button variant="filled" onClick={() => signIn()}>
+			<Button variant="filled" radius={"xl"} onClick={() => signIn()}>
 				<LogIn />
 			</Button>
 			

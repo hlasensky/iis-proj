@@ -8,7 +8,7 @@ import { LogOut } from "lucide-react";
 function SignOutButton() {
 	return (
 		<Tooltip label="Sign out" position="left">
-			<Button variant="filled" onClick={() => signOut()}>
+			<Button variant="filled" radius={"xl"} onClick={() => signOut()}>
 				<LogOut />
 			</Button>
 		</Tooltip>
