@@ -15,6 +15,7 @@ async function Page() {
 	}
 
 	const users = await prisma.users.findMany();
+	
 
 	return (
 		<section className="container mx-auto py-10">

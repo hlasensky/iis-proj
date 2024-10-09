@@ -1,5 +1,7 @@
 "use server";
 
+import { revalidateTag } from 'next/cache'
+
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/utils/authOptions";
 import { Roles, users } from "@prisma/client";
@@ -43,6 +45,8 @@ export async function changeRole(email: string, role: Roles): Promise<200 | 404>
 			role,
 		},
 	});
+
+	revalidateTag("users");
 
 	if (data) {
 		return 200;

@@ -2,6 +2,9 @@
 
 import { users } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
+import { revalidatePath } from 'next/cache';
+import { useRouter } from 'next/router';
+
 
 import {
 	DropdownMenu,
@@ -27,9 +30,8 @@ export const columns: ColumnDef<users>[] = [
 	},
 	{
 		accessorKey: "role",
-		header: "Role",
-		cell: (data) => {
-			const originalRole = data.cell.getValue();
+		cell: (data) => {		
+			let originalRole = data.cell.getValue() as string;
 			console.log(originalRole);
 
 			return (
@@ -41,6 +43,7 @@ export const columns: ColumnDef<users>[] = [
 						<DropdownMenuItem
 							onClick={async () => {
 								await changeRole(data.row.getValue("email"), "ADMIN");
+								originalRole = "ADMIN";
 							}}
 							className="cursor-pointer"
 						>
@@ -50,6 +53,7 @@ export const columns: ColumnDef<users>[] = [
 						<DropdownMenuItem
 							onClick={async () => {
 								await changeRole(data.row.getValue("email"), "USER");
+								originalRole = "USER";
 							}}
 							className="cursor-pointer"
 						>
