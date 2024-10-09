@@ -48,6 +48,7 @@ model users {
   email         String?    @unique(map: "email_unique")
   emailVerified DateTime?  @db.Timestamptz(6)
   image         String?
+  role          Roles     @default(USER)
   accounts      accounts[]
   sessions      sessions[]
 
@@ -60,5 +61,12 @@ model verification_tokens {
   expires    DateTime @db.Timestamptz(6)
 
   @@unique([token, identifier], map: "token_identifier_unique")
+  @@schema("next_auth")
+}
+
+enum Roles {
+  USER
+  ADMIN
+
   @@schema("next_auth")
 }
