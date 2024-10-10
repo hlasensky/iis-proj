@@ -42,19 +42,6 @@ model sessions {
   @@schema("next_auth")
 }
 
-model users {
-  id            String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  name          String?
-  email         String?    @unique(map: "email_unique")
-  emailVerified DateTime?  @db.Timestamptz(6)
-  image         String?
-  role          Roles     @default(USER)
-  accounts      accounts[]
-  sessions      sessions[]
-
-  @@schema("next_auth")
-}
-
 model verification_tokens {
   identifier String?
   token      String   @id
@@ -67,6 +54,20 @@ model verification_tokens {
 enum Roles {
   USER
   ADMIN
+
+  @@schema("next_auth")
+}
+
+model users {
+  emailVerified DateTime?  @db.Timestamptz(6)
+  image         String?
+  accounts      accounts[]
+  sessions      sessions[]
+  id            String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name          String?
+  email         String     @unique(map: "email_unique")
+  password      String?
+  role          Roles      @default(USER)
 
   @@schema("next_auth")
 }

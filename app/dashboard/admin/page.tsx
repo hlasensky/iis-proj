@@ -2,9 +2,9 @@ export const revalidate = 1;
 
 import React from "react";
 import { columns } from "@/components/userTable/Column";
-import { UserTable } from "@/components/userTable/User-table";
+import { DataTable } from "@/components/ui/data-table";
 import { prisma } from "@/lib/prisma";
-import { getSessionUser } from "@/app/adminActions";
+import { getSessionUser } from "@/actions/adminActions";
 import { redirect } from "next/navigation";
 
 async function Page() {
@@ -15,11 +15,10 @@ async function Page() {
 	}
 
 	const users = await prisma.users.findMany();
-	
 
 	return (
 		<section className="container mx-auto py-10">
-			<UserTable columns={columns} data={users} />
+			<DataTable columns={columns} data={users} />
 		</section>
 	);
 }

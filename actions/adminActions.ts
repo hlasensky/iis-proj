@@ -1,11 +1,10 @@
 "use server";
 
-import { revalidateTag } from 'next/cache'
-
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/utils/authOptions";
 import { Roles, users } from "@prisma/client";
 import { getServerSession } from "next-auth";
+import { revalidateTag } from "next/cache";
 
 export async function getSessionUser(): Promise<users | 404> {
 	const session = await getServerSession(authOptions);
@@ -28,10 +27,10 @@ export async function getSessionUser(): Promise<users | 404> {
 }
 
 export async function changeRole(email: string, role: Roles): Promise<200 | 404> {
-    const sessionUser = await getSessionUser();
-    if (sessionUser === 404) {
-        return 404;
-    }
+	const sessionUser = await getSessionUser();
+	if (sessionUser === 404) {
+		return 404;
+	}
 
 	if (sessionUser.role !== "ADMIN" && sessionUser.role !== "USER") {
 		return 404;
@@ -43,6 +42,31 @@ export async function changeRole(email: string, role: Roles): Promise<200 | 404>
 		},
 		data: {
 			role,
+		},
+	});
+
+	revalidateTag("users");
+
+	if (data) {
+		return 200;
+	} else {
+		return 404;
+	}
+}
+
+export async function deleteUser(email: string): Promise<200 | 404> {
+	const sessionUser = await getSessionUser();
+	if (sessionUser === 404) {
+		return 404;
+	}
+
+	if (sessionUser.role !== "ADMIN") {
+		return 404;
+	}
+
+	const data = await prisma.users.delete({
+		where: {
+			email: email,
 		},
 	});
 

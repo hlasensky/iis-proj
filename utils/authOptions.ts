@@ -44,14 +44,12 @@ export const authOptions: NextAuthOptions = {
 		strategy: "jwt", // Using JWT instead of database session
 	},
 	callbacks: {
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		async session({ session, token }) {
-			console.log("Session:", session);
-			console.log("Token:", token);
 			return session;
 		},
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		async jwt({ token, user }) {
-			console.log("JWT Token:", token);
-			console.log("User:", user);
 			return token;
 		},
 	},
