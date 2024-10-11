@@ -3,6 +3,7 @@ import "@mantine/core/styles.css";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/utils/authOptions";
 import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
 	title: "DashBoard ",
@@ -17,12 +18,7 @@ export default async function DashBoardLayout({
 	const session = await getServerSession(authOptions);
 
 	if (!session || !session!.user || !session!.user.email) {
-		return {
-			redirect: {
-				destination: "/auth/signin",
-				permanent: false,
-			},
-		};
+		redirect("/");
 	}
 
 	const user = await prisma.users.findUnique({
@@ -32,12 +28,7 @@ export default async function DashBoardLayout({
 	});
 
 	if (!user || (user.role !== "ADMIN" && user.role !== "USER")) {
-		return {
-			redirect: {
-				destination: "/auth/signin",
-				permanent: false,
-			},
-		};
+		redirect("/");
 	}
 
 	return (
