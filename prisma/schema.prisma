@@ -69,5 +69,67 @@ model users {
   password      String?
   role          Roles      @default(USER)
 
+  userKonferences UserKonference[]
+  Presentation Presentation[]
+  @@schema("next_auth")
+}
+
+model Konference {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name        String
+  description String
+  capacity    Int
+  startTime   DateTime
+  endTime     DateTime
+  creatorId   String    @db.Uuid
+  visitorId   String    @db.Uuid
+  users      UserKonference[]
+  presentations Presentation[]
+  orders      Order[]
+  @@schema("next_auth")
+}
+
+
+// junction
+model UserKonference {
+  id          String  @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  userId      String  @db.Uuid
+  conferenceId String  @db.Uuid
+  role        String? 
+
+  users      users   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conference Konference @relation(fields: [conferenceId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, conferenceId], map: "user_konference_unique")
+  @@schema("next_auth")
+}
+
+model Presentation {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name        String
+  start       DateTime
+  end         DateTime
+  evaluated   Boolean?
+  roomId      String    @db.Uuid
+  conferenceId String    @db.Uuid
+  room        Room      @relation(fields: [roomId], references: [id])
+  creatorId   String    @db.Uuid
+  creator     users      @relation(fields: [creatorId], references: [id])
+  conference Konference @relation(fields: [conferenceId], references: [id])
+  @@schema("next_auth")
+}
+
+model Room {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name        String
+  capacity    Int
+  presentations Presentation[]
+  @@schema("next_auth")
+}
+
+model Order {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  conferenceId String    @db.Uuid
+  conference Konference @relation(fields: [conferenceId], references: [id])
   @@schema("next_auth")
 }
