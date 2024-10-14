@@ -67,6 +67,10 @@ model users {
   name          String?
   email         String         @unique(map: "email_unique")
   password      String?
+  address       String?
+  city          String?
+  country       String?
+  zip           String?
   role          Roles          @default(USER)
   conference    Conference[]
   Presentation  Presentation[]
