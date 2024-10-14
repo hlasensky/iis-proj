@@ -63,12 +63,12 @@ export function NavbarMinimal({ session }: { session: Session | null }) {
 	return (
 		<nav className="fixed top-0 left-0 h-screen w-fit bg-slate-100">
 			<div>
-				<Stack justify="center" gap={0}>
+				<Stack justify="center" gap={20}>
 					{links}
 				</Stack>
 			</div>
 
-			<Stack justify="center" gap={0}>
+			<Stack justify="end"  gap={20}>
 				{session ? (
 					<>
 						<Avatar className="m-auto">
