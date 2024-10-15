@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
 	AlignEndVerticalIcon,
 	Calendar,
@@ -17,6 +16,10 @@ import SignOutButton from "./SignOutButton";
 import { Session } from "next-auth";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { cn } from "@/lib/utils";
+import { activeNavAtom } from "@/app/userAtom";
+import { useAtom } from "jotai";
+import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 interface NavbarLinkProps {
 	icon: typeof HomeIcon;
@@ -55,7 +58,14 @@ const mockdata = [
 ];
 
 export function NavbarMinimal({ session }: { session: Session | null }) {
-	const [active, setActive] = useState(2);
+	const [active, setActive] = useAtom(activeNavAtom);
+	const path = usePathname();
+
+	useEffect(() => {
+		const index = mockdata.findIndex((link) => link.label.toLowerCase() === path.slice(1));
+		if (index !== -1) setActive(index);
+		else setActive(0);
+	}, [path, setActive]);
 
 	const links = mockdata.map((link, index) => (
 		<NavbarLink
