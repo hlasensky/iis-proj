@@ -31,7 +31,7 @@ export default function RootLayout({
 		<SessionProviderWrapper>
 			<html lang="en">
 				<body
-					className={`${geistSans.variable} ${geistMono.variable} antialiased grid grid-flow-col`}
+					className={`${geistSans.variable} ${geistMono.variable} antialiased grid grid-flow-col grid-cols-[auto,1fr]`}
 				>
 					<Nav />
 					<main>{children}</main>

@@ -6,22 +6,24 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 async function Page() {
-  const user = await getSessionUser();
+	const user = await getSessionUser();
 
-  console.log("user", user);
+	console.log("user", user);
 
-  return (
-    <div className="">
-      <Card className="w-4/5 m-auto">
-        <CardHeader>
-          <h2 className="text-2xl font-semibold">Edit Profile</h2>
-        </CardHeader>
-        <CardContent>
-          <ProfileForm defaultVals={user as users} />
-        </CardContent>
-      </Card>
-    </div>
-  );
+	if (user === 404) return redirect("/");
+
+	return (
+		<div className="">
+			<Card className="w-4/5 m-auto">
+				<CardHeader>
+					<h2 className="text-2xl font-semibold">Edit Profile</h2>
+				</CardHeader>
+				<CardContent>
+					<ProfileForm defaultVals={user as users} />
+				</CardContent>
+			</Card>
+		</div>
+	);
 }
 
 export default Page;
