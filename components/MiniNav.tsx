@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Tooltip, UnstyledButton, Stack } from "@mantine/core";
 import {
 	AlignEndVerticalIcon,
 	Calendar,
@@ -16,6 +15,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import SignInButton from "./SignInButton";
 import SignOutButton from "./SignOutButton";
 import { Session } from "next-auth";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
+import { cn } from "@/lib/utils";
 
 interface NavbarLinkProps {
 	icon: typeof HomeIcon;
@@ -26,15 +27,20 @@ interface NavbarLinkProps {
 
 function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
 	return (
-		<Tooltip className="py-1 px-2" label={label} position="right" transitionProps={{ duration: 0 }}>
-			<UnstyledButton
-				className={"flex justify-center items-center"}
-				onClick={onClick}
-				data-active={active || undefined}
-			>
-				<Icon />
-			</UnstyledButton>
-		</Tooltip>
+		<TooltipProvider delayDuration={100}>
+			<Tooltip>
+				<TooltipTrigger
+					onClick={onClick}
+					className={cn(
+						active ? "border-2 border-blue-400 text-blue-400" : "",
+						"rounded-full grid place-content-center w-12 h-12 cursor-pointer m-auto"
+					)}
+				>
+					<Icon />
+				</TooltipTrigger>
+				<TooltipContent side={"right"}>{label}</TooltipContent>
+			</Tooltip>
+		</TooltipProvider>
 	);
 }
 
@@ -62,13 +68,8 @@ export function NavbarMinimal({ session }: { session: Session | null }) {
 
 	return (
 		<nav className="fixed top-0 left-0 h-screen w-fit bg-slate-100">
-			<div>
-				<Stack justify="center" gap={20}>
-					{links}
-				</Stack>
-			</div>
-
-			<Stack justify="end"  gap={20}>
+			<div className="grid gap-3">
+				{links}
 				{session ? (
 					<>
 						<Avatar className="m-auto">
@@ -87,7 +88,7 @@ export function NavbarMinimal({ session }: { session: Session | null }) {
 						<SignInButton />
 					</>
 				)}
-			</Stack>
+			</div>
 		</nav>
 	);
 }
