@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 
 function SignInButton() {
 	return (
-		<Button variant="outline" onClick={() => signIn()}>
+		<Button  variant="outline" onClick={() => signIn()}>
 			<LogIn />
 		</Button>
 	);

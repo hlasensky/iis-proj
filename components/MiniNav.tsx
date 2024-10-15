@@ -1,9 +1,8 @@
 "use client";
 
-import { AlignEndVerticalIcon, HomeIcon, LayoutDashboard, Settings } from "lucide-react";
+import { AlignEndVerticalIcon, HomeIcon, LayoutDashboard, LogIn,  Settings } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import SignInButton from "./SignInButton";
 import { Session } from "next-auth";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -13,6 +12,7 @@ import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { ForwardRefExoticComponent, SVGProps } from "react";
+import { signIn } from "next-auth/react";
 
 interface NavbarLinkProps {
 	icon: ForwardRefExoticComponent<SVGProps<SVGSVGElement>> | (() => JSX.Element);
@@ -28,8 +28,12 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
 				<TooltipTrigger
 					onClick={onClick}
 					className={cn(
-						active ? "border-2 border-blue-400 text-blue-400" : "",
-						"rounded-full grid place-content-center w-12 h-12 cursor-pointer m-auto"
+						active
+							? "border-2 border-blue-400 text-blue-400"
+							: "border-2 border-slate-300 ",
+						label === "Účet" ? "mt-auto" : "",
+
+						"rounded-full grid place-content-center w-12 h-12 cursor-pointer "
 					)}
 				>
 					<Icon />
@@ -47,7 +51,7 @@ const AccBtn = ({ session }: { session: Session | null }) => {
 			<AvatarFallback>{session?.user?.name?.charAt(0) || "A"}</AvatarFallback>
 		</Avatar>
 	) : (
-		<SignInButton />
+		<LogIn onClick={() => signIn()} />
 	);
 };
 
@@ -60,15 +64,15 @@ export function NavbarMinimal({ session }: { session: Session | null }) {
 		{ icon: HomeIcon, label: "Home", url: "/" },
 		{ icon: LayoutDashboard, label: "Konference", url: "/conferences" },
 		{ icon: AlignEndVerticalIcon, label: "Prezentace", url: "/presentations" },
-		{ icon: () => AccBtn({ session: session }), label: "Účet", url: "/account" },
 		{ icon: Settings, label: "Admin", url: "/admin" },
+		{ icon: () => AccBtn({ session: session }), label: "Účet", url: "/account" },
 	];
 
 	useEffect(() => {
 		const index = mockdata.findIndex((link) => link.url === path);
 		if (index !== -1) setActive(index);
 		else setActive(0);
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [path, setActive]);
 
 	const links = mockdata.map((link, index) => (
@@ -81,9 +85,5 @@ export function NavbarMinimal({ session }: { session: Session | null }) {
 		/>
 	));
 
-	return (
-		<nav className=" h-screen w-full bg-slate-100">
-			<div className="flex flex-col">{links}</div>
-		</nav>
-	);
+	return <nav className=" h-screen w-full bg-slate-100 flex flex-col gap-3 justify-start p-1">{links}</nav>;
 }

@@ -7,7 +7,7 @@ import { Button } from "./ui/button";
 
 function SignOutButton() {
 	return (
-		<Button variant="outline" onClick={() => signOut()}>
+		<Button variant="destructive" onClick={() => signOut()}>
 			<LogOut />
 		</Button>
 	);
