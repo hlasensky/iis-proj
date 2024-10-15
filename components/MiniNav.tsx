@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils";
 import { activeNavAtom } from "@/app/userAtom";
 import { useAtom } from "jotai";
 import { useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface NavbarLinkProps {
   icon: typeof HomeIcon;
@@ -53,21 +53,20 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
 }
 
 const mockdata = [
-  { icon: HomeIcon, label: "Home" },
-  { icon: LayoutDashboard, label: "Konference" },
-  { icon: AlignEndVerticalIcon, label: "Prezentace" },
-  { icon: User, label: "Účet" },
-  { icon: Settings, label: "Admin" },
+  { icon: HomeIcon, label: "Home", url: "/" },
+  { icon: LayoutDashboard, label: "Konference", url: "/conferences" },
+  { icon: AlignEndVerticalIcon, label: "Prezentace", url: "/presentations" },
+  { icon: User, label: "Účet", url: "/account" },
+  { icon: Settings, label: "Admin", url: "/admin" },
 ];
 
 export function NavbarMinimal({ session }: { session: Session | null }) {
+  const router = useRouter();
   const [active, setActive] = useAtom(activeNavAtom);
   const path = usePathname();
 
   useEffect(() => {
-    const index = mockdata.findIndex(
-      (link) => link.label.toLowerCase() === path.slice(1)
-    );
+    const index = mockdata.findIndex((link) => link.url === path);
     if (index !== -1) setActive(index);
     else setActive(0);
   }, [path, setActive]);
@@ -77,7 +76,7 @@ export function NavbarMinimal({ session }: { session: Session | null }) {
       {...link}
       key={link.label}
       active={index === active}
-      onClick={() => setActive(index)}
+      onClick={() => router.push(link.url)}
     />
   ));
 
