@@ -64,6 +64,10 @@ export function ProfileForm({ defaultVals }: { defaultVals: users }): JSX.Elemen
 				setSuccess(true);
 			} else {
 				console.log("Error!");
+				form.setError("name", {
+					type: "manual",
+					message: "An error occurred. Please try again later.",
+				});
 			}
 		} catch (error) {
 			console.error("Submission error:", error);

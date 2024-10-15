@@ -1,6 +1,6 @@
 "use client";
 
-import { AlignEndVerticalIcon, HomeIcon, LayoutDashboard, LogIn,  Settings } from "lucide-react";
+import { AlignEndVerticalIcon, HomeIcon, LayoutDashboard, LogIn, Settings } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Session } from "next-auth";
