@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import "@mantine/core/styles.css";
 
 import SessionProviderWrapper from "@/lib/providers/SessionProviderWrapper";
-import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { Toaster } from "sonner";
+import Nav from "@/components/Nav";
 
 const geistSans = localFont({
 	src: "./fonts/GeistVF.woff",
@@ -31,11 +30,11 @@ export default function RootLayout({
 	return (
 		<SessionProviderWrapper>
 			<html lang="en">
-				<head>
-					<ColorSchemeScript />
-				</head>
-				<body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-					<MantineProvider>{children}</MantineProvider>
+				<body
+					className={`${geistSans.variable} ${geistMono.variable} antialiased grid grid-flow-col`}
+				>
+					<Nav />
+					<main>{children}</main>
 					<Toaster richColors />
 				</body>
 			</html>

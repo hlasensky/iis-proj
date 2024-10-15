@@ -1,12 +1,3 @@
-import { NavbarMinimal } from "@/components/MiniNav";
-import { getServerSession } from "next-auth";
-
 export default async function Home() {
-	const session = await getServerSession();
-
-	return (
-		<main>
-			<NavbarMinimal session={session} />
-		</main>
-	);
+	return <main>main page</main>;
 }

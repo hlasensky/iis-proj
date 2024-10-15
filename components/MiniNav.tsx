@@ -67,7 +67,7 @@ export function NavbarMinimal({ session }: { session: Session | null }) {
 	));
 
 	return (
-		<nav className="fixed top-0 left-0 h-screen w-fit bg-slate-100">
+		<nav className=" h-screen w-fit bg-slate-100">
 			<div className="grid gap-3">
 				{links}
 				{session ? (
