@@ -15,14 +15,20 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { users } from "@prisma/client";
-import { changeAccountInfo } from "@/actions/accountActions";
 import { useEffect, useState } from "react";
 import { Check, Loader2 } from "lucide-react";
+import { createAccount } from "@/actions/accountActions";
+import { signIn } from "next-auth/react";
 
 export const formSchema = z.object({
 	name: z.string().min(2, {
 		message: "Name must be at least 2 characters.",
+	}),
+	email: z.string().email({
+		message: "Please enter a valid email address.",
+	}),
+	password: z.string().min(8, {
+		message: "Password must be at least 8 characters.",
 	}),
 	address: z.string().min(2, {
 		message: "Address must be at least 2 characters.",
@@ -38,18 +44,20 @@ export const formSchema = z.object({
 	}),
 });
 
-export function ProfileForm({ defaultVals }: { defaultVals: users }): JSX.Element {
+export function RegisterForm(): JSX.Element {
 	const [success, setSuccess] = useState(false);
 	const [loading, setLoading] = useState(false);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			name: defaultVals.name || "",
-			address: defaultVals.address || "",
-			city: defaultVals.city || "",
-			country: defaultVals.country || "",
-			zip: defaultVals.zip || "",
+			email: "",
+			password: "",
+			name: "",
+			address: "",
+			city: "",
+			country: "",
+			zip: "",
 		},
 	});
 
@@ -57,12 +65,18 @@ export function ProfileForm({ defaultVals }: { defaultVals: users }): JSX.Elemen
 	async function onSubmit(values: z.infer<typeof formSchema>) {
 		setLoading(true);
 		try {
-			const status = await changeAccountInfo(values);
+			const status = await createAccount(values);
 			if (status === 200) {
-				console.log("Form Success!");
+				console.log("Register Success!");
 				setSuccess(true);
+				form.reset();
+				signIn("credentials", {
+					email: values.email,
+					password: values.password,
+					callbackUrl: "/",
+				});
 			} else {
-				console.log("Form Error!");
+				console.log("Register Error!");
 				form.setError("name", {
 					type: "manual",
 					message: "An error occurred. Please try again later.",
@@ -75,19 +89,45 @@ export function ProfileForm({ defaultVals }: { defaultVals: users }): JSX.Elemen
 		}
 	}
 
-    useEffect(() => {
-        if (success) {
-            const timer = setTimeout(() => {
-                setSuccess(false);
-            }, 2000);
+	useEffect(() => {
+		if (success) {
+			const timer = setTimeout(() => {
+				setSuccess(false);
+			}, 2000);
 
-            return () => clearTimeout(timer);
-        }
-    }, [success]);
+			return () => clearTimeout(timer);
+		}
+	}, [success]);
 
 	return (
 		<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-1/2 mx-auto mt-7">
+				<FormField
+					control={form.control}
+					name="email"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Email</FormLabel>
+							<FormControl>
+								<Input placeholder="karel.novak@vut.cz" {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<FormField
+					control={form.control}
+					name="password"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Password</FormLabel>
+							<FormControl>
+								<Input type="password" {...field} />
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
 				<FormField
 					control={form.control}
 					name="name"
@@ -159,7 +199,13 @@ export function ProfileForm({ defaultVals }: { defaultVals: users }): JSX.Elemen
 					)}
 				/>
 				<Button type="submit" className={success ? "border-green-400" : ""}>
-					{loading ? <Loader2 className="animate-spin" /> : success ? <Check /> : "Submit"}
+					{loading ? (
+						<Loader2 className="animate-spin" />
+					) : success ? (
+						<Check />
+					) : (
+						"Submit"
+					)}
 				</Button>
 			</form>
 		</Form>

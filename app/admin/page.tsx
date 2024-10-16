@@ -6,6 +6,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/actions/actions";
+import { orderColumns } from "@/components/userTable/OrderColumns";
 
 async function Page() {
 	const sessionUser = await getSessionUser();
@@ -14,10 +15,12 @@ async function Page() {
 		redirect("/");
 	}
 
-	const users = await prisma.users.findMany();
+    const users = await prisma.users.findMany();
+    const orders = await prisma.order.findMany();
 
 	return (
-		<section className="container mx-auto py-10">
+        <section className="container mx-auto py-10">
+            <DataTable columns={orderColumns} data={orders} />
 			<DataTable columns={columns} data={users} />
 		</section>
 	);

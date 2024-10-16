@@ -1,6 +1,6 @@
 "use client";
 
-import { $Enums, users } from "@prisma/client";
+import { users } from "@prisma/client";
 import { CellContext, ColumnDef } from "@tanstack/react-table";
 
 import {
@@ -15,17 +15,7 @@ import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Trash2 } from "lucide-react";
 
-type CellProps = CellContext<
-	{
-		id: string;
-		name: string | null;
-		email: string | null;
-		emailVerified: Date | null;
-		image: string | null;
-		role: $Enums.Roles;
-	},
-	unknown
->;
+type CellProps = CellContext<users, unknown>;
 
 const DelUserCell = (data: CellProps) => {
 	return (
@@ -66,7 +56,9 @@ const ChangeRoleCell = (data: CellProps) => {
 
 	return (
 		<DropdownMenu>
-				<DropdownMenuTrigger className="border rounded p-2 hover:bg-slate-300">{originalRole as string}</DropdownMenuTrigger>
+			<DropdownMenuTrigger className="border rounded p-2 hover:bg-slate-300">
+				{originalRole as string}
+			</DropdownMenuTrigger>
 			<DropdownMenuContent>
 				<DropdownMenuItem
 					onClick={async () => {

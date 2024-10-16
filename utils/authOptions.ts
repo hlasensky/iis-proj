@@ -3,6 +3,7 @@ import { NextAuthOptions } from "next-auth";
 import Github from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
+import { hashPassword, isSamePassword } from "@/actions/adminActions";
 
 export const authOptions: NextAuthOptions = {
 	secret: process.env.NEXTAUTH_SECRET!,
@@ -15,20 +16,24 @@ export const authOptions: NextAuthOptions = {
 			name: "Credentials",
 			credentials: {
 				email: { label: "Email", type: "email" },
+				password: { label: "Password", type: "password" },
 			},
-
 			async authorize(credentials) {
 				if (!credentials) {
 					return null;
 				}
-				console.log("Credentials:", credentials)
 				const user = await prisma.users.findUnique({
 					where: {
 						email: credentials.email,
 					},
 				});
-				console.log("User:", user);
-				if (user) {
+
+				if (!user) {
+					return null;
+				}
+
+				const isSamePass = await isSamePassword(credentials.password, user?.password!);
+				if (isSamePass) {
 					return user;
 				} else {
 					return null;
@@ -46,10 +51,12 @@ export const authOptions: NextAuthOptions = {
 	callbacks: {
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		async session({ session, token }) {
+			console.log("Session:", session);
 			return session;
 		},
 		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		async jwt({ token, user }) {
+			console.log("JWT:", token);
 			return token;
 		},
 	},

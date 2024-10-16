@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { Roles } from "@prisma/client";
 import { revalidateTag } from "next/cache";
 import { getSessionUser } from "./actions";
+import bcrypt from "bcrypt";
 
 export async function changeRole(email: string, role: Roles): Promise<200 | 404> {
 	const sessionUser = await getSessionUser();
@@ -56,4 +57,12 @@ export async function deleteUser(email: string): Promise<200 | 404> {
 	} else {
 		return 404;
 	}
+}
+
+export async function hashPassword(password: string): Promise<string> {
+	return await bcrypt.hash(password, 10);
+}
+
+export async function isSamePassword(password: string, hash: string): Promise<boolean> {
+	return await bcrypt.compare(password, hash);
 }

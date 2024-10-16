@@ -9,8 +9,6 @@ import React from "react";
 async function Page() {
 	const user = await getSessionUser();
 
-	console.log("user", user);
-
 	if (user === 404) return redirect("/");
 
 	return (

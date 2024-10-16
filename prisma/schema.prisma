@@ -129,6 +129,7 @@ model Order {
   conference      Conference @relation(fields: [conferenceId], references: [id], onDelete: Cascade)
   numberOfTickets Int        @default(1)
   code            String     @unique(map: "code_unique") @db.Uuid
+  paymentStatus   Boolean    @default(false)
 
   @@schema("next_auth")
 }

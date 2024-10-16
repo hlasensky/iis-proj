@@ -17,7 +17,6 @@ export async function getSessionUser(): Promise<users | 404> {
 		},
 	});
 
-	console.log("user", session);
 
 	if (!user) {
 		return 404;

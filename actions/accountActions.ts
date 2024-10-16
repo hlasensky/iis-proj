@@ -4,9 +4,20 @@ import { prisma } from "@/lib/prisma";
 import { getSessionUser } from "./actions";
 import { z } from "zod";
 import { formSchema } from "@/components/account/form";
+import { hashPassword } from "./adminActions";
 
 const accountSchema = z.object({
 	email: z.string().email(),
+	name: z.string().min(1),
+	address: z.string().min(1),
+	city: z.string().min(1),
+	country: z.string().min(1),
+	zip: z.string().regex(/^\d{3}\s?\d{2}$/),
+});
+
+const createAccountSchema = z.object({
+	email: z.string().email(),
+	password: z.string().min(8),
 	name: z.string().min(1),
 	address: z.string().min(1),
 	city: z.string().min(1),
@@ -41,11 +52,11 @@ export async function changeAccountInfo(formData: z.infer<typeof formSchema>) {
 				email: user.email,
 			},
 			data: {
-                name: formData.name,
-                address: formData.address,
-                city: formData.city,
-                country: formData.country,
-                zip: formData.zip,
+				name: formData.name,
+				address: formData.address,
+				city: formData.city,
+				country: formData.country,
+				zip: formData.zip,
 			},
 		});
 
@@ -59,10 +70,11 @@ export async function changeAccountInfo(formData: z.infer<typeof formSchema>) {
 	}
 }
 
-export async function createAccount(formData: z.infer<typeof formSchema>) {
+export async function createAccount(formData: z.infer<typeof createAccountSchema>) {
 	try {
-		const parsedData = accountSchema.safeParse({
-			email: "",
+		const parsedData = createAccountSchema.safeParse({
+			email: formData.email,
+			password: formData.password,
 			name: formData.name,
 			address: formData.address,
 			city: formData.city,
@@ -74,10 +86,11 @@ export async function createAccount(formData: z.infer<typeof formSchema>) {
 			console.error(parsedData.error);
 			return 404;
 		}
-
+		const hashedPassword = await hashPassword(formData.password);
 		const data = await prisma.users.create({
 			data: {
-				email: "",
+				email: formData.email,
+				password: hashedPassword,
 				name: formData.name,
 				address: formData.address,
 				city: formData.city,
