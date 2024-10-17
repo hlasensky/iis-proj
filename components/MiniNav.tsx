@@ -1,21 +1,26 @@
 "use client";
 
-import { AlignEndVerticalIcon, HomeIcon, LayoutDashboard, LogIn, Settings } from "lucide-react";
+import {
+	AlignEndVerticalIcon,
+	HomeIcon,
+	LayoutDashboard,
+	LogIn,
+	Settings,
+	UserRoundPlus,
+} from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Session } from "next-auth";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { cn } from "@/lib/utils";
-import { activeNavAtom } from "@/app/userAtom";
-import { useAtom } from "jotai";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 
 import { ForwardRefExoticComponent, SVGProps } from "react";
 import { signIn } from "next-auth/react";
 
 interface NavbarLinkProps {
-	icon: ForwardRefExoticComponent<SVGProps<SVGSVGElement>> | (() => JSX.Element);
+	icon: ForwardRefExoticComponent<SVGProps<SVGSVGElement>> | (() => JSX.Element | null);
 	label: string;
 	active?: boolean;
 	onClick?(): void;
@@ -31,7 +36,7 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
 						active
 							? "border-2 border-blue-400 text-blue-400"
 							: "border-2 border-slate-300 ",
-						label === "Účet" ? "mt-auto" : "",
+						label === "Registrace" ? "mt-auto" : "",
 
 						"rounded-full grid place-content-center w-12 h-12 cursor-pointer "
 					)}
@@ -55,9 +60,13 @@ const AccBtn = ({ session }: { session: Session | null }) => {
 	);
 };
 
+const RegBtn = ({ session }: { session: Session | null }) => {
+	return session ? null : <UserRoundPlus />;
+};
+
 export function NavbarMinimal({ session }: { session: Session | null }) {
 	const router = useRouter();
-	const [active, setActive] = useAtom(activeNavAtom);
+	const [active, setActive] = useState(0);
 	const path = usePathname();
 
 	const mockdata = [
@@ -65,7 +74,8 @@ export function NavbarMinimal({ session }: { session: Session | null }) {
 		{ icon: LayoutDashboard, label: "Konference", url: "/conferences" },
 		{ icon: AlignEndVerticalIcon, label: "Prezentace", url: "/presentations" },
 		{ icon: Settings, label: "Admin", url: "/admin" },
-		{ icon: () => AccBtn({ session: session }), label: "Účet", url: "/account" },
+		{ icon: () => RegBtn({ session: session }), label: "Registrace", url: "/auth/register" },
+		{ icon: () => AccBtn({ session: session }), label: "Účet/Přihlášení", url: "/account" },
 	];
 
 	useEffect(() => {
@@ -85,5 +95,9 @@ export function NavbarMinimal({ session }: { session: Session | null }) {
 		/>
 	));
 
-	return <nav className=" h-screen w-full bg-slate-100 flex flex-col gap-3 justify-start p-1">{links}</nav>;
+	return (
+		<nav className=" h-screen w-full bg-slate-100 flex flex-col gap-3 justify-start p-1">
+			{links}
+		</nav>
+	);
 }

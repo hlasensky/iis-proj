@@ -3,7 +3,7 @@ import { NextAuthOptions } from "next-auth";
 import Github from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
-import { hashPassword, isSamePassword } from "@/actions/adminActions";
+import {  isSamePassword } from "@/actions/adminActions";
 
 export const authOptions: NextAuthOptions = {
 	secret: process.env.NEXTAUTH_SECRET!,
@@ -28,11 +28,11 @@ export const authOptions: NextAuthOptions = {
 					},
 				});
 
-				if (!user) {
+				if (!user || !user.password) {
 					return null;
 				}
 
-				const isSamePass = await isSamePassword(credentials.password, user?.password!);
+				const isSamePass = await isSamePassword(credentials.password, user?.password);
 				if (isSamePass) {
 					return user;
 				} else {
