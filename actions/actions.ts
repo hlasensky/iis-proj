@@ -1,26 +1,37 @@
-"use server"
+"use server";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/utils/authOptions";
-import {  users } from "@prisma/client";
+import { users } from "@prisma/client";
 import { getServerSession } from "next-auth";
+import bcrypt from "bcrypt";
 
 export async function getSessionUser(): Promise<users | 404> {
-	const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
-	if (!session || !session!.user || !session!.user.email) {
-		return 404;
-	}
+  if (!session || !session!.user || !session!.user.email) {
+    return 404;
+  }
 
-	const user = await prisma.users.findUnique({
-		where: {
-			email: session!.user!.email,
-		},
-	});
+  const user = await prisma.users.findUnique({
+    where: {
+      email: session!.user!.email,
+    },
+  });
 
+  if (!user) {
+    return 404;
+  }
 
-	if (!user) {
-		return 404;
-	}
+  return user;
+}
 
-	return user;
+export async function hashPassword(password: string): Promise<string> {
+  return await bcrypt.hash(password, 10);
+}
+
+export async function isSamePassword(
+  password: string,
+  hash: string
+): Promise<boolean> {
+  return await bcrypt.compare(password, hash);
 }
