@@ -1,15 +1,22 @@
+import CartButton from "@/components/root/CartButton";
+import ConferenceCard from "@/components/root/ConferenceCard";
 import { prisma } from "@/lib/prisma";
-import { array } from "zod";
 
 export default async function Home() {
-  const conferences = await prisma.conference.findMany({});
-  return (
-    <main>
-      {conferences.map((conference, i) => (
-        <div key={i}>
-          <p>{conference.name}</p>
-        </div>
-      ))}
-    </main>
-  );
+	const conferences = await prisma.conference.findMany({
+		where: {
+			endTime: {
+				gte: new Date(),
+			},
+		},
+	});
+
+	return (
+		<main>
+			<CartButton />
+			{conferences.map(async (conference, i) => (
+				<ConferenceCard key={i} conference={conference} />
+			))}
+		</main>
+	);
 }

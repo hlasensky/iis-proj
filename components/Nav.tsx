@@ -7,11 +7,7 @@ import { getServerSession } from "next-auth";
 async function Nav() {
 	const session = await getServerSession();
 
-	return (
-		<>
-			<NavbarMinimal session={session} />
-		</>
-	);
+	return <NavbarMinimal session={session} />;
 }
 
 export default Nav;

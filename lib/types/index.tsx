@@ -1,11 +1,8 @@
-
 export type Ticket = {
-    id: number,
-    name: string,
-    price: number,
-    amount: number
-}
+	id: number;
+	name: string;
+	price: number;
+	amount: number;
+};
 
-export type Cart = {
-    tickets: Ticket[]
-}
+export type Cart = { id: string; name: string; numberOfTickets: number, capacity: number }[];
