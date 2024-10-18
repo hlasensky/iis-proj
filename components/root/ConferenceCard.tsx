@@ -21,7 +21,7 @@ async function ConferenceCard({ conference }: { conference: Conference }) {
 				<ConferencesButtons
 					id={conference.id}
 					name={conference.name}
-					capacity={capacityObj.freeNmOfTickets}
+					freeCapacity={capacityObj.freeNmOfTickets}
 				/>
 			</CardHeader>
 			<CardContent>

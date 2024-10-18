@@ -29,7 +29,7 @@ function Page() {
 								<ConferencesButtons
 									id={item.id}
 									name={item.name}
-									capacity={item.capacity}
+									freeCapacity={item.freeCapacity}
 								/>
 							</li>
 						))}

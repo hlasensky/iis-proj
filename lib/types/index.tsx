@@ -5,4 +5,4 @@ export type Ticket = {
 	amount: number;
 };
 
-export type Cart = { id: string; name: string; numberOfTickets: number, capacity: number }[];
+export type Cart = { id: string; name: string; numberOfTickets: number, freeCapacity: number }[];

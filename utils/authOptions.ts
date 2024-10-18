@@ -49,7 +49,7 @@ export const authOptions: NextAuthOptions = {
     secret: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   }),
   session: {
-    strategy: "jwt", // Using JWT instead of database session
+    strategy: "database", // Using JWT instead of database session
   },
   callbacks: {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
