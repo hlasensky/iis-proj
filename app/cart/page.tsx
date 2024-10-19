@@ -8,9 +8,12 @@ import ConferencesButtons from "@/components/root/ConferencesButtons";
 import { Button } from "@/components/ui/button";
 import { processOrder } from "@/actions/cartAction";
 import { toast } from "sonner";
+import { getSessionUser } from "@/actions/actions";
+import { useRouter } from "next/navigation";
 
 function Page() {
-	const [cart, setCart] = useAtom(cartAtom);
+    const [cart, setCart] = useAtom(cartAtom);
+    const router = useRouter();
 
 	return (
 		<Card className="w-3/4 mx-auto my-6">
@@ -41,8 +44,12 @@ function Page() {
 				<p>Cena: {cart.reduce((acc, item) => acc + item.numberOfTickets * 100, 0)} Kč</p>
 				<Button
 					onClick={async () => {
+						const user = await getSessionUser();
+						if (user === 404) return toast.error("Nepodařilo se získat uživatele");
+
 						const res = await processOrder(
 							cart.map((item) => ({
+								userId: user.id,
 								conferenceId: item.id,
 								numberOfTickets: item.numberOfTickets,
 							}))

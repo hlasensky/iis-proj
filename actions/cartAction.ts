@@ -12,11 +12,13 @@ const orderSchema = z.object({
 
 export async function processOrder(
 	orders: {
+		userId: string;
 		conferenceId: string;
 		numberOfTickets: number;
 	}[]
 ) {
 	async function createOrder(
+		userId: string,
 		conferenceId: string,
 		numberOfTickets: number
 	): Promise<{ id: string; status: number }> {
@@ -43,6 +45,11 @@ export async function processOrder(
 			data: {
 				code: randomUUID(),
 				paymentStatus: false,
+				users: {
+					connect: {
+						id: userId,
+					},
+				},
 				numberOfTickets,
 				conferenceId,
 			},
@@ -58,7 +65,11 @@ export async function processOrder(
 
 	const results = await Promise.all(
 		orders.map(async (order) => {
-			const result = await createOrder(order.conferenceId, order.numberOfTickets);
+			const result = await createOrder(
+				order.userId,
+				order.conferenceId,
+				order.numberOfTickets
+			);
 			return result;
 		})
 	);

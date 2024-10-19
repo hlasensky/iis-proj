@@ -16,7 +16,12 @@ async function Page() {
 	}
 
     const users = await prisma.users.findMany();
-    const orders = await prisma.order.findMany();
+	const orders = await prisma.order.findMany({
+		include: {
+			conference: true,
+			users: true,
+		},
+	});
 
 	return (
         <section className="container mx-auto py-10">
