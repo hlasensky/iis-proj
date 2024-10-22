@@ -1,5 +1,4 @@
 "use client";
-import { createConference } from "@/actions/accountActions";
 import { CirclePlus } from "lucide-react";
 import React from "react";
 import { Button } from "../ui/button";
@@ -19,10 +18,10 @@ import {
 
 import { ConfForm } from "./ConfForm";
 
-function CreateConfButton() {
+function CreateConfButton({ classNameTrig }: { classNameTrig: string }) {
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger className={classNameTrig}>
         <CirclePlus size={36} absoluteStrokeWidth />
       </DialogTrigger>
       <DialogContent>

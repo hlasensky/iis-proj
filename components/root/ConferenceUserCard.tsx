@@ -2,7 +2,13 @@ import React from "react";
 import { Conference } from "@prisma/client";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 
-function ConferenceUserCard({ conference }: { conference: Conference }) {
+function ConferenceUserCard({
+  conference,
+  code,
+}: {
+  conference: Conference;
+  code: string;
+}) {
   return (
     <Card className="w-3/4 mx-auto my-6">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -11,6 +17,7 @@ function ConferenceUserCard({ conference }: { conference: Conference }) {
       <CardContent>
         <div>
           <p>{conference.description}</p>
+          <p>klic ke konferenci: {code}</p>
         </div>
       </CardContent>
       <CardFooter className="flex justify-between text-slate-400">

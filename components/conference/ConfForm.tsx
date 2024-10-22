@@ -40,9 +40,11 @@ export function ConfForm(): JSX.Element {
     defaultValues: {
       name: "",
       desc: "",
-      day: `${new Date().getDate()}-${new Date().getMonth()}-${new Date().getFullYear()}`,
-      start: "",
-      end: "",
+      day: `${new Date().getFullYear()}-${
+        new Date().getMonth() + 1
+      }-${new Date().getDate()}`,
+      start: "12:00",
+      end: "15:00",
       capacity: "1",
     },
   });

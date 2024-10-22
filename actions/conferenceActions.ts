@@ -3,6 +3,9 @@
 import { prisma } from "@/lib/prisma";
 import { Session } from "inspector/promises";
 import { getSessionUser } from "./actions";
+import { formKeySchema } from "@/components/conference/ConfKeyForm";
+import { z } from "zod";
+import { formConfSchema } from "@/components/conference/ConfForm";
 
 export async function getCapacity(conferenceId: string) {
   const conference = await prisma.conference.findUnique({
@@ -68,7 +71,50 @@ export async function getUserConferences() {
       conference: true,
     },
   });
-  const conferences = userOrders.map((order) => order.conference);
+  //   const conferences = userOrders.map((order) => order.conference);
 
-  return conferences;
+  return userOrders;
+}
+
+export async function createConference(values: z.infer<typeof formConfSchema>) {
+  const user = await getSessionUser();
+  const tmpStart = `${values.day}T${values.start}:00.000Z`;
+  const tmpEnd = `${values.day}T${values.end}:00.000Z`;
+  if (user === 404) {
+    return null;
+  }
+  const conference = await prisma.conference.create({
+    data: {
+      name: values.name,
+      description: values.desc,
+      capacity: Number(values.capacity),
+      startTime: tmpStart,
+      endTime: tmpEnd,
+      creatorId: user.id,
+    },
+  });
+
+  if (conference) return 200;
+  return 404;
+}
+
+export async function addVisitorByKey(values: z.infer<typeof formKeySchema>) {
+  const user = await getSessionUser();
+
+  if (user === 404) {
+    return null;
+  }
+  const order = await prisma.order.update({
+    where: {
+      code: values.key,
+    },
+    data: {
+      users: {
+        connect: { id: user.id },
+      },
+    },
+  });
+
+  if (order) return 200;
+  return 404;
 }

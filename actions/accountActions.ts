@@ -111,28 +111,3 @@ export async function createAccount(
     return 404;
   }
 }
-
-export async function createConference(values: z.infer<typeof formConfSchema>) {
-  const user = await getSessionUser();
-  console.log("hello");
-
-  console.log(values.day, values.start);
-  // const tmpStart = ;
-  // cosnt tmpEnd = ;
-  if (user === 404) {
-    return null;
-  }
-  const conference = await prisma.conference.create({
-    data: {
-      name: values.name,
-      description: values.desc,
-      capacity: Number(values.capacity),
-      startTime: values.start,
-      endTime: values.end,
-      creatorId: user.id,
-    },
-  });
-
-  if (conference) return 200;
-  return 404;
-}
