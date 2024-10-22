@@ -50,14 +50,16 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
 }
 
 const AccBtn = ({ session }: { session: Session | null }) => {
-	return session ? (
+	return (
 		<Avatar className="m-auto">
 			<AvatarImage src={session?.user?.image || ""} alt={session?.user?.name || "avatar"} />
 			<AvatarFallback>{session?.user?.name?.charAt(0) || "A"}</AvatarFallback>
 		</Avatar>
-	) : (
-		<LogIn onClick={() => signIn()} />
 	);
+};
+
+const LogInBtn = () => {
+	return <LogIn onClick={() => signIn()} />;
 };
 
 const RegBtn = ({ session }: { session: Session | null }) => {
@@ -75,7 +77,8 @@ export function NavbarMinimal({ session }: { session: Session | null }) {
 		{ icon: AlignEndVerticalIcon, label: "Prezentace", url: "/presentations" },
 		{ icon: Settings, label: "Admin", url: "/admin" },
 		{ icon: () => RegBtn({ session: session }), label: "Registrace", url: "/auth/register" },
-		{ icon: () => AccBtn({ session: session }), label: "Účet/Přihlášení", url: "/account" },
+		{ icon: () => LogInBtn(), label: "Přihlášení", url: "" },
+		{ icon: () => AccBtn({ session: session }), label: "Účet", url: "/account" },
 	];
 
 	useEffect(() => {
