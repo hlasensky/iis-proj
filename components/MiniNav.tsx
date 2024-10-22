@@ -36,7 +36,7 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
 						active
 							? "border-2 border-blue-400 text-blue-400"
 							: "border-2 border-slate-300 ",
-						label === "Registrace" ? "mt-auto" : "",
+						label === "Registrace" || label === "Účet" ? "mt-auto" : "",
 
 						"rounded-full grid place-content-center w-12 h-12 cursor-pointer "
 					)}
@@ -76,9 +76,16 @@ export function NavbarMinimal({ session }: { session: Session | null }) {
 		{ icon: LayoutDashboard, label: "Konference", url: "/conferences" },
 		{ icon: AlignEndVerticalIcon, label: "Prezentace", url: "/presentations" },
 		{ icon: Settings, label: "Admin", url: "/admin" },
-		{ icon: () => RegBtn({ session: session }), label: "Registrace", url: "/auth/register" },
-		{ icon: () => LogInBtn(), label: "Přihlášení", url: "" },
-		{ icon: () => AccBtn({ session: session }), label: "Účet", url: "/account" },
+		...(session
+			? [{ icon: AccBtn, label: "Účet", url: "/account" }]
+			: [
+					{
+						icon: () => RegBtn({ session: session }),
+						label: "Registrace",
+						url: "/auth/register",
+					},
+					{ icon: LogInBtn, label: "Přihlášení", url: "" },
+			  ]),
 	];
 
 	useEffect(() => {
