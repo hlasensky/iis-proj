@@ -5,6 +5,7 @@ import { getSessionUser } from "./actions";
 import { z } from "zod";
 import { formSchema } from "@/components/account/form";
 import { hashPassword } from "./actions";
+import { formConfSchema } from "@/components/conference/ConfForm";
 
 const accountSchema = z.object({
   email: z.string().email(),
@@ -111,18 +112,23 @@ export async function createAccount(
   }
 }
 
-export async function createConference() {
+export async function createConference(values: z.infer<typeof formConfSchema>) {
   const user = await getSessionUser();
+  console.log("hello");
+
+  console.log(values.day, values.start);
+  // const tmpStart = ;
+  // cosnt tmpEnd = ;
   if (user === 404) {
     return null;
   }
   const conference = await prisma.conference.create({
     data: {
-      name: "Konference1",
-      description: "desc konf hello",
-      capacity: 10,
-      startTime: "2024-11-30T15:00:00Z",
-      endTime: "2024-11-30T20:00:00Z",
+      name: values.name,
+      description: values.desc,
+      capacity: Number(values.capacity),
+      startTime: values.start,
+      endTime: values.end,
       creatorId: user.id,
     },
   });
