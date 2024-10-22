@@ -7,7 +7,6 @@ import {
 import ConferenceUserCard from "@/components/root/ConferenceUserCard";
 import ConferenceCreatorCard from "@/components/root/ConferenceCreatorCard";
 import CreateConfButton from "@/components/conference/CreateConfButton";
-import { Input } from "@/components/ui/input";
 import { ConfKeyForm } from "@/components/conference/ConfKeyForm";
 
 async function Conferences() {

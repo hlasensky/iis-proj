@@ -5,7 +5,7 @@ import { CellContext, ColumnDef } from "@tanstack/react-table";
 import { Switch } from "../ui/switch";
 import { toast } from "sonner";
 import { changePayStatus } from "@/actions/adminActions";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
+import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
 
 type CellProps = Order & { conference: Conference } & { users: users[] };
 
@@ -42,14 +42,16 @@ const ChangeStatusCell = (data: CellContext<CellProps, unknown>) => {
 
 const ShowUsersCell = (data: CellContext<CellProps, unknown>) => {
 	return (
-		<Collapsible className="relative">
-			<CollapsibleTrigger>Návštěvníci</CollapsibleTrigger>
-			{data.row.original.users.map((user) => (
-				<CollapsibleContent key={user.id} >
-					<p>{user.email}</p>
-				</CollapsibleContent>
-			))}
-		</Collapsible>
+		<Popover>
+			<PopoverTrigger>Zobrazit návštěvníky</PopoverTrigger>
+			<PopoverContent>
+				{data.row.original.users.map((user) => (
+					<div key={user.id}>
+						<p>{user.email}</p>
+					</div>
+				))}
+			</PopoverContent>
+		</Popover>
 	);
 };
 

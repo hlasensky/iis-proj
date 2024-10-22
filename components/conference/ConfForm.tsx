@@ -14,9 +14,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { createConference } from "@/actions/accountActions";
 import { useEffect, useState } from "react";
 import { Check, Loader2 } from "lucide-react";
+import { createConference } from "@/actions/conferenceActions";
 
 export const formConfSchema = z.object({
   name: z.string().min(2, {

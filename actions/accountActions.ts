@@ -5,7 +5,6 @@ import { getSessionUser } from "./actions";
 import { z } from "zod";
 import { formSchema } from "@/components/account/form";
 import { hashPassword } from "./actions";
-import { formConfSchema } from "@/components/conference/ConfForm";
 
 const accountSchema = z.object({
   email: z.string().email(),
