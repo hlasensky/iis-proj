@@ -112,6 +112,10 @@ export async function createAccount(
 }
 
 export async function createConference() {
+  const user = await getSessionUser();
+  if (user === 404) {
+    return null;
+  }
   const conference = await prisma.conference.create({
     data: {
       name: "Konference1",
@@ -119,7 +123,7 @@ export async function createConference() {
       capacity: 10,
       startTime: "2024-11-30T15:00:00Z",
       endTime: "2024-11-30T20:00:00Z",
-      creatorId: "a0e455f5-cc98-4731-9b18-ed4491d70b65",
+      creatorId: user.id,
     },
   });
 

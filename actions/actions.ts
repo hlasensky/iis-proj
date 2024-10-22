@@ -9,6 +9,7 @@ export async function getSessionUser(): Promise<users | 404> {
   const session = await getServerSession(authOptions);
 
   if (!session || !session!.user || !session!.user.email) {
+    console.error("user in session not found");
     return 404;
   }
 
@@ -19,6 +20,8 @@ export async function getSessionUser(): Promise<users | 404> {
   });
 
   if (!user) {
+    console.error("user in db not found");
+
     return 404;
   }
 
