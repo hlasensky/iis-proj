@@ -5,36 +5,33 @@ import { users } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import bcrypt from "bcrypt";
 
-export async function getSessionUser(): Promise<users | 404> {
-  const session = await getServerSession(authOptions);
+export async function getSessionUser(): Promise<users | null> {
+	const session = await getServerSession(authOptions);
 
-  if (!session || !session!.user || !session!.user.email) {
-    console.error("user in session not found");
-    return 404;
-  }
+	if (!session || !session!.user || !session!.user.email) {
+		console.error("user in session not found");
+		return null;
+	}
 
-  const user = await prisma.users.findUnique({
-    where: {
-      email: session!.user!.email,
-    },
-  });
+	const user = await prisma.users.findUnique({
+		where: {
+			email: session!.user!.email,
+		},
+	});
 
-  if (!user) {
-    console.error("user in db not found");
+	if (!user) {
+		console.error("user in db not found");
 
-    return 404;
-  }
+		return null;
+	}
 
-  return user;
+	return user;
 }
 
 export async function hashPassword(password: string): Promise<string> {
-  return await bcrypt.hash(password, 10);
+	return await bcrypt.hash(password, 10);
 }
 
-export async function isSamePassword(
-  password: string,
-  hash: string
-): Promise<boolean> {
-  return await bcrypt.compare(password, hash);
+export async function isSamePassword(password: string, hash: string): Promise<boolean> {
+	return await bcrypt.compare(password, hash);
 }

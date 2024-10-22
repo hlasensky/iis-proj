@@ -5,14 +5,14 @@ import { Roles } from "@prisma/client";
 import { revalidateTag } from "next/cache";
 import { getSessionUser } from "./actions";
 
-export async function changeRole(email: string, role: Roles): Promise<200 | 404> {
+export async function changeRole(email: string, role: Roles): Promise<200 | null> {
 	const sessionUser = await getSessionUser();
-	if (sessionUser === 404) {
-		return 404;
+	if (!sessionUser) {
+		return null;
 	}
 
 	if (sessionUser.role !== "ADMIN" && sessionUser.role !== "USER") {
-		return 404;
+		return null;
 	}
 
 	const data = await prisma.users.update({
@@ -29,18 +29,18 @@ export async function changeRole(email: string, role: Roles): Promise<200 | 404>
 	if (data) {
 		return 200;
 	} else {
-		return 404;
+		return null;
 	}
 }
 
-export async function deleteUser(email: string): Promise<200 | 404> {
+export async function deleteUser(email: string): Promise<200 | null> {
 	const sessionUser = await getSessionUser();
-	if (sessionUser === 404) {
-		return 404;
+	if (!sessionUser) {
+		return null;
 	}
 
 	if (sessionUser.role !== "ADMIN") {
-		return 404;
+		return null;
 	}
 
 	const data = await prisma.users.delete({
@@ -54,25 +54,25 @@ export async function deleteUser(email: string): Promise<200 | 404> {
 	if (data) {
 		return 200;
 	} else {
-		return 404;
+		return null;
 	}
 }
 
-export async function changePayStatus(orderId: string, status: boolean): Promise<200 | 404> {
+export async function changePayStatus(orderId: string, status: boolean): Promise<200 | null> {
 	const sessionUser = await getSessionUser();
-	if (sessionUser === 404) {
-		return 404;
+	if (!sessionUser) {
+		return null;
 	}
 
 	if (sessionUser.role !== "ADMIN") {
-		return 404;
-  }
+		return null;
+	}
 
-  if (status !== true && status !== false) {
-    return 404;
-  }
+	if (status !== true && status !== false) {
+		return null;
+	}
 
-  console.log(orderId, status);
+	console.log(orderId, status);
 
 	const data = await prisma.order.update({
 		where: {
@@ -88,6 +88,6 @@ export async function changePayStatus(orderId: string, status: boolean): Promise
 	if (data) {
 		return 200;
 	} else {
-		return 404;
+		return null;
 	}
 }

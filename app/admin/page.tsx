@@ -11,11 +11,11 @@ import { orderColumns } from "@/components/userTable/OrderColumns";
 async function Page() {
 	const sessionUser = await getSessionUser();
 
-	if (sessionUser === 404 || sessionUser.role !== "ADMIN") {
+	if (!sessionUser || sessionUser.role !== "ADMIN") {
 		redirect("/");
 	}
 
-    const users = await prisma.users.findMany();
+	const users = await prisma.users.findMany();
 	const orders = await prisma.order.findMany({
 		include: {
 			conference: true,
@@ -24,8 +24,8 @@ async function Page() {
 	});
 
 	return (
-        <section className="container mx-auto py-10">
-            <DataTable columns={orderColumns} data={orders} />
+		<section className="container mx-auto py-10">
+			<DataTable columns={orderColumns} data={orders} />
 			<DataTable columns={columns} data={users} />
 		</section>
 	);

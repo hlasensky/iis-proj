@@ -20,7 +20,7 @@ const ChangeStatusCell = (data: CellContext<CellProps, unknown>) => {
 							const response = await changePayStatus(data.row.original.id, val);
 							if (response === 200) {
 								resolve("Order status changed");
-							} else if (response === 404) {
+							} else if (!response ) {
 								reject("Failed to change order status: Order not found");
 							} else {
 								reject("Failed to change order status");

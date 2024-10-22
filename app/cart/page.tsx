@@ -9,9 +9,10 @@ import { Button } from "@/components/ui/button";
 import { processOrder } from "@/actions/cartAction";
 import { toast } from "sonner";
 import { getSessionUser } from "@/actions/actions";
+import { ConfKeyForm } from "@/components/conference/ConfKeyForm";
 
 function Page() {
-    const [cart, setCart] = useAtom(cartAtom);
+	const [cart, setCart] = useAtom(cartAtom);
 
 	return (
 		<Card className="w-3/4 mx-auto my-6">
@@ -43,7 +44,7 @@ function Page() {
 				<Button
 					onClick={async () => {
 						const user = await getSessionUser();
-						if (user === 404) return toast.error("Nepodařilo se získat uživatele");
+						if (!user) return toast.error("Nepodařilo se získat uživatele");
 
 						const res = await processOrder(
 							cart.map((item) => ({
@@ -62,6 +63,9 @@ function Page() {
 				>
 					Objednat
 				</Button>
+
+				<hr className="my-4"></hr>
+				<ConfKeyForm />
 			</CardFooter>
 		</Card>
 	);

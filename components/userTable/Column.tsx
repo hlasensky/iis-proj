@@ -28,7 +28,7 @@ const DelUserCell = (data: CellProps) => {
 							const response = await deleteUser(data.row.getValue("email"));
 							if (response === 200) {
 								resolve("User deleted");
-							} else if (response === 404) {
+							} else if (!response) {
 								reject("Failed to delete user: User not found");
 							} else {
 								reject("Failed to delete user");
@@ -71,7 +71,7 @@ const ChangeRoleCell = (data: CellProps) => {
 									);
 									if (response === 200) {
 										resolve("Role changed to ADMIN");
-									} else if (response === 404) {
+									} else if (!response) {
 										reject("Failed to change role: User not found");
 									} else {
 										reject("Failed to change role");
@@ -104,7 +104,7 @@ const ChangeRoleCell = (data: CellProps) => {
 									);
 									if (response === 200) {
 										resolve("Role changed to USER");
-									} else if (response === 404) {
+									} else if (!response) {
 										reject("Failed to change role: User not found");
 									} else {
 										reject("Failed to change role");
