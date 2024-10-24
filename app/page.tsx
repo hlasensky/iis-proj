@@ -10,6 +10,12 @@ export default async function Home() {
 					gte: new Date(),
 				},
 			},
+			orderBy: {
+				startTime: "asc",
+			},
+			include: {
+				orders: true,
+			},
 		});
 
 		return (

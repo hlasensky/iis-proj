@@ -19,26 +19,32 @@ export const authOptions: NextAuthOptions = {
                 password: { label: "Password", type: "password" },
             },
             async authorize(credentials) {
-                if (!credentials) {
-                    return null;
-                }
-                const user = await prisma.users.findUnique({
-                    where: {
-                        email: credentials.email,
-                    },
-                });
+                try {
+                    if (!credentials) {
+                        return null;
+                    }
+                    console.log("Credentials", credentials);
+                    const user = await prisma.users.findUnique({
+                        where: {
+                            email: credentials.email,
+                        },
+                    });
 
-                if (!user || !user.password) {
-                    return null;
-                }
+                    if (!user || !user.password) {
+                        return null;
+                    }
 
-                const isSamePass = await isSamePassword(
-                    credentials.password,
-                    user?.password,
-                );
-                if (isSamePass) {
-                    return user;
-                } else {
+                    const isSamePass = await isSamePassword(
+                        credentials.password,
+                        user?.password,
+                    );
+                    if (isSamePass) {
+                        return user;
+                    } else {
+                        return null;
+                    }
+                } catch (error) {
+                    console.error(error);
                     return null;
                 }
             },
@@ -62,5 +68,8 @@ export const authOptions: NextAuthOptions = {
             console.log("JWT:", token);
             return token;
         },
+    },
+    pages: {
+        signIn: "/auth/signin",
     },
 };

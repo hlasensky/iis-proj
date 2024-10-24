@@ -73,6 +73,7 @@ export function ConfKeyForm(): JSX.Element {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-row w-full"
       >
+        <FormMessage />
         <FormField
           control={form.control}
           name="key"
