@@ -52,6 +52,19 @@ export async function getCreatorConferences() {
     }
     return conferences;
 }
+export async function getConferences() {
+    const conferences = await prisma.conference.findMany({
+        where: {
+            endTime: {
+                gte: new Date(),
+            },
+        },
+        orderBy: {
+            startTime: "asc",
+        },
+    });
+    return conferences;
+}
 
 export async function getUserConferences() {
     const user = await getSessionUser();
@@ -118,8 +131,8 @@ export async function addVisitorByKey(values: z.infer<typeof formKeySchema>) {
 
         if (order) return 200;
         return null;
-	} catch (error) {
-		console.error(error);
-		return null;
-	}
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 }
