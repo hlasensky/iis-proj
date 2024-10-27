@@ -21,7 +21,7 @@ function ConferencesButtons({
     const itemInCart = cart.find((item) => item.id === id);
     return (
         <div className="flex gap-2 flex-wrap">
-            <Link title={name} href={`/conference/${id}`}>
+            <Link title={name} href={`/conferences/${id}`}>
                 <Button variant={"outline"}>Detail</Button>
             </Link>
             {freeCapacity ? (

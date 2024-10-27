@@ -52,18 +52,32 @@ export async function getCreatorConferences() {
     }
     return conferences;
 }
-export async function getConferences() {
-    const conferences = await prisma.conference.findMany({
-        where: {
-            endTime: {
-                gte: new Date(),
+export async function getConferences(id?: string) {
+    try {
+        if (id) {
+            const conference = await prisma.conference.findUnique({
+                where: {
+                    id: id,
+                },
+            });
+            return conference;
+        }
+
+        const conferences = await prisma.conference.findMany({
+            where: {
+                endTime: {
+                    gte: new Date(),
+                },
             },
-        },
-        orderBy: {
-            startTime: "asc",
-        },
-    });
-    return conferences;
+            orderBy: {
+                startTime: "asc",
+            },
+        });
+        return conferences;
+    } catch (error) {
+        console.error("Failed to fetch conferences:", error);
+        return null;
+    }
 }
 
 export async function getUserConferences() {
