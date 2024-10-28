@@ -40,11 +40,16 @@ function CalendarPresenCard({
                     <PopoverTrigger>Detail</PopoverTrigger>
                     <PopoverContent>
                         <p>{presentation.name}</p>
-                        <p>{presentation.start.toLocaleDateString()}</p>
-                        <p>{presentation.end.toLocaleTimeString()}</p>
+                        <p>
+                            {presentation.start.toLocaleTimeString()} -{" "}
+                            {presentation.start.toLocaleDateString()}
+                        </p>
+                        <p>
+                            {presentation.end.toLocaleTimeString()} -{" "}
+                            {presentation.end.toLocaleDateString()}{" "}
+                        </p>
                         <p>{presentation.creator.name}</p>
                         <p>{presentation.room.name}</p>
-                        
                     </PopoverContent>
                 </Popover>
             </CardContent>

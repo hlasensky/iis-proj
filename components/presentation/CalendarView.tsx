@@ -19,6 +19,8 @@ function generateTimeLabels() {
 }
 function CalendarView({
     presentations,
+    conferenceStart,
+    conferenceEnd,
 }: {
     presentations: (Presentation & {
         room: Room;
@@ -26,6 +28,8 @@ function CalendarView({
             name: string | null;
         };
     })[];
+    conferenceStart: Date;
+    conferenceEnd: Date;
 }) {
     const timeLabels = generateTimeLabels();
     const [minutes, setMinutes] = React.useState(
@@ -51,13 +55,8 @@ function CalendarView({
             }}
             ref={(div) => {
                 if (div) {
-                    const now = new Date();
-                    const currentMinutes =
-                        now.getHours() * 60 + now.getMinutes();
-                    const totalMinutes = 24 * 60;
-                    const scrollFraction = currentMinutes / totalMinutes;
                     const totalHeight = div.scrollHeight - div.clientHeight;
-                    div.scrollTop = scrollFraction * totalHeight;
+                    div.scrollTop = totalHeight / 2;
                 }
             }}
         >
@@ -81,10 +80,10 @@ function CalendarView({
                             </div>
                         );
                     })}
+                
                 {/* Now stamp */}
-
                 <div
-                    className="bg-red-500 h-2 w-2 rounded-full"
+                    className="bg-red-500 h-2 w-2 m-auto ml-1 rounded-full"
                     style={{
                         gridRow: Math.round(minutes / 5 + 2) + " / span 1",
                     }}
@@ -93,7 +92,7 @@ function CalendarView({
 
             {/* Presentations Grid */}
             <div
-                className="grid grid-rows-[repeat(288,minmax(0,1fr))] grid-cols-3"
+                className="grid grid-rows-[repeat(288,minmax(0,1fr))]  "
                 style={{ columnGap: "5px" }}
             >
                 {/* For each presentation, create a card */}
@@ -117,6 +116,33 @@ function CalendarView({
                         />
                     );
                 })}
+                {/* adding the start of a conference */}
+                <div
+                    className="bg-slate-200 h-[1px] col-span-3 text-center relative"
+                    style={{
+                        gridRowStart: Math.round(
+                            (conferenceStart.getMinutes() +
+                                conferenceStart.getHours() * 60) /
+                                5,
+                        )+2,
+                    }}
+                >
+                    <span className="absolute mx-2 -translate-y-1/2 -translate-x-1/2 bg-white rounded-md">Start - {conferenceStart.toLocaleTimeString()}</span>
+                </div>
+
+                {/* adding the end of a conference */}
+                <div
+                    className="bg-slate-200 h-[1px] col-span-3 text-center relative"
+                    style={{
+                        gridRowStart: Math.round(
+                            (conferenceEnd.getMinutes() +
+                                conferenceEnd.getHours() * 60) /
+                                5,
+                        )+2,
+                    }}
+                >
+                    <span className="absolute mx-2 -translate-y-1/2 -translate-x-1/2 bg-white rounded-md">End - {conferenceEnd.toLocaleTimeString()}</span>
+                </div>
             </div>
         </div>
     );

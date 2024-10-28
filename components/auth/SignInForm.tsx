@@ -1,5 +1,4 @@
-"use client";
-
+"use client";;
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -16,6 +15,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+
+import type { JSX } from "react";
 
 const formSchema = z.object({
     email: z.string().email(),

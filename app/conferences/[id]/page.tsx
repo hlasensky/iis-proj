@@ -22,7 +22,8 @@ export async function generateStaticParams() {
     }));
 }
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+    const params = await props.params;
     const { id } = params;
     const conferenceData = await getConferences(id);
     const conference = conferenceData as Conference;
@@ -55,7 +56,7 @@ export default async function Page({ params }: { params: { id: string } }) {
                     />
                 </CardContent>
             </Card>
-            <CalendarView presentations={presentations} />
+            <CalendarView presentations={presentations} conferenceStart={conference.startTime} conferenceEnd={conference.endTime} />
         </div>
     );
 }

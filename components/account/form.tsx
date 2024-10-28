@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { users } from "@prisma/client";
 import { changeAccountInfo } from "@/actions/accountActions";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type JSX } from "react";
 import { Check, Loader2 } from "lucide-react";
 
 export const formSchema = z.object({

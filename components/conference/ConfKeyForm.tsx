@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type JSX } from "react";
 import { Check, Loader2 } from "lucide-react";
 import { addVisitorByKey } from "@/actions/conferenceActions";
 

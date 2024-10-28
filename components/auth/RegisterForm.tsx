@@ -15,7 +15,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type JSX } from "react";
 import { Check, Loader2 } from "lucide-react";
 import { createAccount } from "@/actions/accountActions";
 import { signIn } from "next-auth/react";
