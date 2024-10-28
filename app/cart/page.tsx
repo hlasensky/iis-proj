@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { getSessionUser } from "@/actions/actions";
 import { ConfKeyForm } from "@/components/conference/ConfKeyForm";
 import { signIn } from "next-auth/react";
+import { getCapacity } from "@/actions/conferenceActions";
 
 function Page() {
     const [cart, setCart] = useAtom(cartAtom);
@@ -43,6 +44,7 @@ function Page() {
                                     <ConferencesButtons
                                         id={item.id}
                                         name={item.name}
+                                        freeCapacity={(await getCapacity(item.id))?.freeNmOfTickets || 0}
                                     />
                                 </li>
                             );
