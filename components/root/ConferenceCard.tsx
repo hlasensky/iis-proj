@@ -1,4 +1,4 @@
-import { Conference } from "@prisma/client";
+import { Conference, Order } from "@prisma/client";
 import React from "react";
 import ConferencesButtons from "@/components/root/ConferencesButtons";
 import {
@@ -13,7 +13,7 @@ async function ConferenceCard({
     conference,
     capacityObj,
 }: {
-    conference: Conference;
+    conference: Conference & { orders: Order[] };
     capacityObj: {
         takenNmOfTickets: number;
         freeNmOfTickets: number;

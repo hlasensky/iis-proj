@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader } from "../ui/card";
-import { Presentation, Room, users } from "@prisma/client";
+import { Presentation, Room } from "@prisma/client";
 import { selectedPresentationAtom } from "@/app/userAtom";
 import { useAtom } from "jotai";
 import { cn } from "@/lib/utils";

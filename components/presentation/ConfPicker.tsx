@@ -11,11 +11,13 @@ export async function ConfPicker() {
             className="hidden"
             data-conferences={JSON.stringify(conferences)}
         >
-            {conferences.map((conference) => (
-                <option key={conference.id} value={conference.id}>
-                    {conference.name}
-                </option>
-            ))}
+            {conferences && Array.isArray(conferences)
+                ? conferences.map((conference) => (
+                      <option key={conference.id} value={conference.id}>
+                          {conference.name}
+                      </option>
+                  ))
+                : null}
         </select>
     );
 }
