@@ -34,7 +34,6 @@ async function ConferenceCard({
                 <ConferencesButtons
                     id={conference.id}
                     name={conference.name}
-                    freeCapacity={capacityObj.freeNmOfTickets}
                 />
             </CardHeader>
             <CardContent>

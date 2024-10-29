@@ -51,18 +51,9 @@ model verification_tokens {
   @@schema("next_auth")
 }
 
-enum Roles {
-  USER
-  ADMIN
-
-  @@schema("next_auth")
-}
-
 model users {
   emailVerified DateTime?      @db.Timestamptz(6)
   image         String?
-  accounts      accounts[]
-  sessions      sessions[]
   id            String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name          String?
   email         String         @unique(map: "email_unique")
@@ -74,7 +65,9 @@ model users {
   role          Roles          @default(USER)
   conference    Conference[]
   Presentation  Presentation[]
-  Order         Order[]
+  accounts      accounts[]
+  sessions      sessions[]
+  Order         Order[]        @relation("OrderTousers")
 
   @@schema("next_auth")
 }
@@ -87,10 +80,11 @@ model Conference {
   startTime     DateTime
   endTime       DateTime
   creatorId     String         @db.Uuid
+  price         Float?
   creator       users          @relation(fields: [creatorId], references: [id])
-  room          Room[]
-  presentations Presentation[]
   orders        Order[]
+  presentations Presentation[]
+  room          Room[]
 
   @@schema("next_auth")
 }
@@ -102,11 +96,11 @@ model Presentation {
   end          DateTime
   evaluated    Boolean?
   roomId       String     @db.Uuid
-  room         Room       @relation(fields: [roomId], references: [id], onDelete: Cascade)
   conferenceId String     @db.Uuid
-  conference   Conference @relation(fields: [conferenceId], references: [id], onDelete: Cascade)
   creatorId    String     @db.Uuid
+  conference   Conference @relation(fields: [conferenceId], references: [id], onDelete: Cascade)
   creator      users      @relation(fields: [creatorId], references: [id])
+  room         Room       @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   @@schema("next_auth")
 }
@@ -115,21 +109,28 @@ model Room {
   id            String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name          String
   capacity      Int
+  conferenceId  String?        @db.Uuid
   presentations Presentation[]
   Conference    Conference?    @relation(fields: [conferenceId], references: [id], onDelete: Cascade)
-  conferenceId  String?        @db.Uuid
 
   @@schema("next_auth")
 }
 
 model Order {
   id              String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  users           users[]
   conferenceId    String     @db.Uuid
-  conference      Conference @relation(fields: [conferenceId], references: [id], onDelete: Cascade)
   numberOfTickets Int        @default(1)
   code            String     @unique(map: "code_unique") @db.Uuid
   paymentStatus   Boolean    @default(false)
+  conference      Conference @relation(fields: [conferenceId], references: [id], onDelete: Cascade)
+  users           users[]    @relation("OrderTousers")
+
+  @@schema("next_auth")
+}
+
+enum Roles {
+  USER
+  ADMIN
 
   @@schema("next_auth")
 }
