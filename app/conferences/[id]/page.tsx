@@ -28,7 +28,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     const conferenceData = await getConferences(id);
     const conference = conferenceData as Conference;
 
-    const presentations = await getPresentations(id);
+    let presentations = await getPresentations(id);
+    presentations = presentations.filter(
+        (presentation) => presentation.evaluated,
+    );
 
     return (
         <div className="flex gap-4 justify-between ">
@@ -56,7 +59,11 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                     />
                 </CardContent>
             </Card>
-            <CalendarView presentations={presentations} conferenceStart={conference.startTime} conferenceEnd={conference.endTime} />
+            <CalendarView
+                presentations={presentations}
+                conferenceStart={conference.startTime}
+                conferenceEnd={conference.endTime}
+            />
         </div>
     );
 }

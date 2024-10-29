@@ -23,8 +23,8 @@ function CalendarView({
     conferenceEnd,
 }: {
     presentations: (Presentation & {
-        room: Room;
-        creator: {
+        room?: Room | null;
+        creator?: {
             name: string | null;
         };
     })[];
@@ -44,6 +44,8 @@ function CalendarView({
 
         return () => clearInterval(interval); // Cleanup interval on component unmount
     }, []);
+
+    if (!presentations) return null;
 
     return (
         <div
@@ -80,7 +82,7 @@ function CalendarView({
                             </div>
                         );
                     })}
-                
+
                 {/* Now stamp */}
                 <div
                     className="bg-red-500 h-2 w-2 m-auto ml-1 rounded-full"
@@ -120,28 +122,34 @@ function CalendarView({
                 <div
                     className="bg-slate-200 h-[1px] col-span-3 text-center relative"
                     style={{
-                        gridRowStart: Math.round(
-                            (conferenceStart.getMinutes() +
-                                conferenceStart.getHours() * 60) /
-                                5,
-                        )+2,
+                        gridRowStart:
+                            Math.round(
+                                (conferenceStart.getMinutes() +
+                                    conferenceStart.getHours() * 60) /
+                                    5,
+                            ) + 2,
                     }}
                 >
-                    <span className="absolute mx-2 -translate-y-1/2 -translate-x-1/2 bg-white rounded-md">Start - {conferenceStart.toLocaleTimeString()}</span>
+                    <span className="absolute mx-2 -translate-y-1/2 -translate-x-1/2 bg-white rounded-md">
+                        Start - {conferenceStart.toLocaleTimeString()}
+                    </span>
                 </div>
 
                 {/* adding the end of a conference */}
                 <div
                     className="bg-slate-200 h-[1px] col-span-3 text-center relative"
                     style={{
-                        gridRowStart: Math.round(
-                            (conferenceEnd.getMinutes() +
-                                conferenceEnd.getHours() * 60) /
-                                5,
-                        )+2,
+                        gridRowStart:
+                            Math.round(
+                                (conferenceEnd.getMinutes() +
+                                    conferenceEnd.getHours() * 60) /
+                                    5,
+                            ) + 2,
                     }}
                 >
-                    <span className="absolute mx-2 -translate-y-1/2 -translate-x-1/2 bg-white rounded-md">End - {conferenceEnd.toLocaleTimeString()}</span>
+                    <span className="absolute mx-2 -translate-y-1/2 -translate-x-1/2 bg-white rounded-md">
+                        End - {conferenceEnd.toLocaleTimeString()}
+                    </span>
                 </div>
             </div>
         </div>

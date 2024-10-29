@@ -13,9 +13,9 @@ function CalendarPresenCard({
     rowSpan,
 }: {
     presentation: Presentation & {
-        room: Room;
-        creator: {
-            name: string | null;
+        room?: Room | null;
+        creator?: {
+            name?: string | null;
         };
     };
     rowStart: number;
@@ -48,8 +48,8 @@ function CalendarPresenCard({
                             {presentation.end.toLocaleTimeString()} -{" "}
                             {presentation.end.toLocaleDateString()}{" "}
                         </p>
-                        <p>{presentation.creator.name}</p>
-                        <p>{presentation.room.name}</p>
+                        <p>{presentation.creator?.name}</p>
+                        <p>{presentation.room?.name}</p>
                     </PopoverContent>
                 </Popover>
             </CardContent>
