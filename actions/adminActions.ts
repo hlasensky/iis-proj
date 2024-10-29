@@ -91,3 +91,36 @@ export async function changePayStatus(orderId: string, status: boolean): Promise
 		return null;
 	}
 }
+
+
+export async function changeEvaluatedStatus(presentationId: string, status: boolean): Promise<200 | null> {
+	const sessionUser = await getSessionUser();
+	if (!sessionUser) {
+		return null;
+	}
+
+	if (sessionUser.role !== "ADMIN") {
+		return null;
+	}
+
+	if (status !== true && status !== false) {
+		return null;
+	}
+
+	const data = await prisma.presentation.update({
+		where: {
+			id: presentationId,
+		},
+		data: {
+			evaluated: status,
+		},
+	});
+
+	revalidateTag("presentations");
+
+	if (data) {
+		return 200;
+	} else {
+		return null;
+	}
+}

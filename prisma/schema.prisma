@@ -92,15 +92,18 @@ model Conference {
 model Presentation {
   id           String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name         String
-  start        DateTime
-  end          DateTime
+  start        DateTime?
+  end          DateTime?
   evaluated    Boolean?
-  roomId       String     @db.Uuid
+  roomId       String?    @db.Uuid
   conferenceId String     @db.Uuid
   creatorId    String     @db.Uuid
+  description  String?
+  tags         String[]
+  content      String?
   conference   Conference @relation(fields: [conferenceId], references: [id], onDelete: Cascade)
   creator      users      @relation(fields: [creatorId], references: [id])
-  room         Room       @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  room         Room?      @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   @@schema("next_auth")
 }
