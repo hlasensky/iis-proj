@@ -11,6 +11,7 @@ function CalendarPresenCard({
     presentation,
     rowStart,
     rowSpan,
+    colStart,
 }: {
     presentation: Presentation & {
         room?: Room | null;
@@ -20,17 +21,19 @@ function CalendarPresenCard({
     };
     rowStart: number;
     rowSpan: number;
+    colStart: number;
 }) {
     const [selected, setSelected] = useAtom(selectedPresentationAtom);
     return (
         <Card
             onClick={() => setSelected(presentation)}
             style={{
-                gridRowStart: rowStart,
-                gridRowEnd: rowStart + rowSpan,
+                gridRowStart: 1 + rowStart,
+                gridRowEnd: 1 + rowStart + rowSpan,
+                gridColumnStart: colStart,
             }}
             className={cn(
-                "bg-slate-200",
+                "bg-slate-200 my-1",
                 selected?.id === presentation.id && "border-2 border-slate-400",
             )}
         >

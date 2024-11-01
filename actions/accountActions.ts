@@ -28,7 +28,7 @@ const createAccountSchema = z.object({
 export async function changeAccountInfo(formData: z.infer<typeof formSchema>) {
 	try {
 		const parsedData = accountSchema.safeParse({
-			email: "tomas.hlasensky@seznam.cz",
+			email: "test@test.cz",
 			name: formData.name,
 			address: formData.address,
 			city: formData.city,
