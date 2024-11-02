@@ -118,11 +118,15 @@ function CalendarView({
                 {/* For each presentation, create a card */}
                 {presentations.map((presentation, i) => {
                     const startMinutes =
-                        presentation.start.getMinutes() +
-                        presentation.start.getHours() * 60;
+                        presentation.start
+                            ? presentation.start.getMinutes() +
+                              presentation.start.getHours() * 60
+                            : 0;
                     const endMinutes =
-                        presentation.end.getMinutes() +
-                        presentation.end.getHours() * 60;
+                        presentation.end
+                            ? presentation.end.getMinutes() +
+                              presentation.end.getHours() * 60
+                            : 0;
 
                     const rowStart = Math.round(startMinutes / 5); // Starting row based on 5-minute intervals
                     const rowSpan = Math.round((endMinutes - startMinutes) / 5); // Row span based on duration

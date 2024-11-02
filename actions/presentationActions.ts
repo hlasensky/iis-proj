@@ -20,7 +20,7 @@ export async function createPresentation(
             evaluated: false,
             creatorId: user?.id,
             content: values.content,
-            conferenceId: values.conference, 
+            conferenceId: values.conference,
         },
     });
 
@@ -50,4 +50,46 @@ export async function getPresentations(conferenceId: string) {
         console.error("Failed to fetch presentations:", error);
         return [];
     }
+}
+
+export async function getUserPresentations() {
+    const user = await getSessionUser();
+    if (!user) {
+        return null;
+    }
+
+    const orders = await prisma.order.findMany({
+        where: {
+            users: {
+                some: {
+                    id: user.id,
+                },
+            },
+        },
+    });
+
+    const conferences = [];
+    for (const order of orders) {
+        const conference = await prisma.conference.findUnique({
+            where: {
+                id: order.conferenceId,
+            },
+        });
+
+        if (!conference) {
+            continue;
+        }
+
+        const presentations = await prisma.presentation.findMany({
+            where: {
+                conferenceId: conference.id,
+            },
+        });
+
+        for (const presentation of presentations) {
+            conferences.push(presentation);
+        }
+    }
+
+    return conferences;
 }
