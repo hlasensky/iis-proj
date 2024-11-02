@@ -92,8 +92,8 @@ model Conference {
 model Presentation {
   id           String     @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name         String
-  start        DateTime   @db.Timestamptz(6)
-  end          DateTime   @db.Timestamptz(6)
+  start        DateTime?  @db.Timestamptz(6)
+  end          DateTime?  @db.Timestamptz(6)
   evaluated    Boolean?
   roomId       String?    @db.Uuid
   conferenceId String     @db.Uuid

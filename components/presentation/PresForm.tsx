@@ -32,6 +32,8 @@ import {
 } from "@/components/ui/popover";
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
+import { createPresentation } from "@/actions/presentationActions";
+import { Textarea } from "../ui/textarea";
 
 export const formPresSchema = z.object({
     name: z.string().min(2, {
@@ -39,6 +41,9 @@ export const formPresSchema = z.object({
     }),
     conference: z.string({
         required_error: "Please select a conference.",
+    }),
+    content: z.string().min(2, {
+        message: "Content must be at least 2 characters.",
     }),
 });
 
@@ -67,9 +72,11 @@ export function PresForm() {
         fetchConferences();
     }, []);
 
-    const onSubmit = (data: z.infer<typeof formPresSchema>) => {
+    const onSubmit = async (data: z.infer<typeof formPresSchema>) => {
         toast.success("Vytvoreno");
         console.log("Selected Conference ID:", data);
+        const createPress = await createPresentation(data);
+        console.log(createPress);
     };
 
     if (loading) {
@@ -169,6 +176,23 @@ export function PresForm() {
                                 dashboard.
                             </FormDescription>
                             <FormMessage />
+                            <FormField
+                                control={form.control}
+                                name="content"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Content</FormLabel>
+                                        <FormControl>
+                                            <Textarea
+                                                placeholder="Tell us a little bit about yourself"
+                                                className="resize-none"
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                         </FormItem>
                     )}
                 />

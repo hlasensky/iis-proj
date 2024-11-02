@@ -125,6 +125,33 @@ export async function createConference(values: z.infer<typeof formConfSchema>) {
     return null;
 }
 
+export async function updateConference(
+    id: string,
+    values: z.infer<typeof formConfSchema>,
+) {
+    const user = await getSessionUser();
+    const tmpStart = `${values.day}T${values.start}:00.000Z`;
+    const tmpEnd = `${values.day}T${values.end}:00.000Z`;
+    if (!user) {
+        return null;
+    }
+    const conference = await prisma.conference.update({
+        where: {
+            id: id,
+        },
+        data: {
+            name: values.name,
+            description: values.desc,
+            capacity: Number(values.capacity),
+            startTime: tmpStart,
+            endTime: tmpEnd,
+        },
+    });
+
+    if (conference) return 200;
+    return null;
+}
+
 export async function addVisitorByKey(values: z.infer<typeof formKeySchema>) {
     const user = await getSessionUser();
 
@@ -147,6 +174,23 @@ export async function addVisitorByKey(values: z.infer<typeof formKeySchema>) {
         return null;
     } catch (error) {
         console.error(error);
+        return null;
+    }
+}
+
+export async function getRooms(conferenceId: string) {
+    if (!conferenceId) return null;
+    try {
+        if (conferenceId) {
+            const rooms = await prisma.room.findMany({
+                where: {
+                    conferenceId,
+                },
+            });
+            return rooms;
+        }
+    } catch (error) {
+        console.error("Failed to fetch conferences:", error);
         return null;
     }
 }

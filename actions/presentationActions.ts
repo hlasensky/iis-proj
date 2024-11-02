@@ -1,35 +1,32 @@
-// "use server";
+"use server";
 
 import { prisma } from "@/lib/prisma";
 
-// import { prisma } from "@/lib/prisma";
-// import { getSessionUser } from "./actions";
-// // import { formPresSchema } from "@/components/presentation/PresForm";
-// import { z } from "zod";
+import { getSessionUser } from "./actions";
+import { formPresSchema } from "@/components/presentation/PresForm";
+import { z } from "zod";
 
-// export async function createPresentation(
-//     values: z.infer<typeof formPresSchema>,
-// ) {
-//     const user = await getSessionUser();
-//     if (!user) {
-//         return null;
-//     }
-//     // const conference = await prisma.presentation.create({
-//     //     data: {
-//     //         name: values.name,
-//     //         start: "",
-//     //         end: "",
-//     //         roomId: "",
-//     //         conferenceId:"",
-//     //         evaluated: false,
-//     //         creatorId: user?.id,
-//     //     },
-//     // });
+export async function createPresentation(
+    values: z.infer<typeof formPresSchema>,
+) {
+    const user = await getSessionUser();
+    if (!user) {
+        return null;
+    }
+    console.log(values);
+    const conference = await prisma.presentation.create({
+        data: {
+            name: values.name,
+            evaluated: false,
+            creatorId: user?.id,
+            content: values.content,
+            conferenceId: values.conference, 
+        },
+    });
 
-//     // if (conference) return 200;
-//     // return null;
-//     return 200;
-// }
+    if (conference) return 200;
+    return null;
+}
 
 export async function getPresentations(conferenceId: string) {
     try {
