@@ -76,6 +76,7 @@ const LogInBtn = () => {
 const RegBtn = ({ session }: { session: Session | null }) => {
     return session ? null : <UserRoundPlus />;
 };
+const id = "";
 
 export function NavbarMinimal({ session }: { session: Session | null }) {
     const router = useRouter();

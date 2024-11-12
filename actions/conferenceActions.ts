@@ -194,3 +194,11 @@ export async function getRooms(conferenceId: string) {
         return null;
     }
 }
+
+export async function deleteConference(conferenceId: string) {
+    const conferences = await prisma.conference.delete({
+        where: {
+            id: conferenceId,
+        },
+    });
+}

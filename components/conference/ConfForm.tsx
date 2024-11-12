@@ -20,6 +20,9 @@ import {
     createConference,
     updateConference,
 } from "@/actions/conferenceActions";
+import { toast } from "sonner";
+import { useAtom } from "jotai";
+import { openPopupAtom } from "@/app/userAtom";
 
 export const formConfSchema = z.object({
     name: z.string().min(2, {
@@ -47,16 +50,14 @@ export function ConfForm({
     const form = useForm<z.infer<typeof formConfSchema>>({
         resolver: zodResolver(formConfSchema),
         defaultValues: {
-            name: defaultValues?.name || "",
-            desc: defaultValues?.desc || "",
-            day:
-                defaultValues?.day ||
-                `${new Date().getFullYear()}-${
-                    new Date().getMonth() + 1
-                }-${new Date().getDate()}`,
-            start: defaultValues?.start || "12:00",
-            end: defaultValues?.end || "15:00",
-            capacity: defaultValues?.capacity || "1",
+            name: "",
+            desc: "",
+            day: `${new Date().getFullYear()}-${
+                new Date().getMonth() + 1
+            }-${new Date().getDate()}`,
+            start: "12:00",
+            end: "15:00",
+            capacity: "1",
         },
     });
 
@@ -65,11 +66,7 @@ export function ConfForm({
         setLoading(true);
         console.log(values);
         try {
-            let status;
-            if (defaultValues && editID)
-                status = await updateConference(editID, values);
-            else status = await createConference(values);
-
+            const status = await createConference(values);
             if (status === 200) {
                 console.log("Form Success!");
                 setSuccess(true);
@@ -203,4 +200,7 @@ export function ConfForm({
             </form>
         </Form>
     );
+}
+function setOpenPopup(arg0: boolean) {
+    throw new Error("Function not implemented.");
 }

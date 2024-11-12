@@ -32,24 +32,46 @@ import {
 } from "@/components/ui/popover";
 import { useEffect, useState } from "react";
 import { Input } from "../ui/input";
-import { createPresentation } from "@/actions/presentationActions";
-import { Textarea } from "../ui/textarea";
+import {
+    createPresentation,
+    editPresentation,
+} from "@/actions/presentationActions";
+import { useAtom } from "jotai";
+import { openPopupAtom } from "@/app/userAtom";
+import { Presentation } from "@prisma/client";
 
 export const formPresSchema = z.object({
     name: z.string().min(2, {
         message: "Name must be at least 2 characters.",
     }),
+    desc: z.string().min(2, {
+        message: "Name must be at least 2 characters.",
+    }),
+    content: z.string().min(2, {
+        message: "Name must be at least 2 characters.",
+    }),
     conference: z.string({
         required_error: "Please select a conference.",
     }),
-    content: z.string().min(2, {
-        message: "Content must be at least 2 characters.",
-    }),
 });
+export const formPresEditSchema = z.object({
+    name: z.string().optional(),
+    desc: z.string().optional(),
+    content: z.string().optional(),
+    conference: z.string().optional(),
+});
+type PresFormProps = {
+    edit: boolean;
+    pres?: Presentation;
+    conf?: string;
+    Cname?: string;
+};
 
-export function PresForm() {
-    const form = useForm<z.infer<typeof formPresSchema>>({
-        resolver: zodResolver(formPresSchema),
+export function PresForm({ edit, pres, conf, Cname }: PresFormProps) {
+    const schema = edit ? formPresEditSchema : formPresSchema;
+
+    const form = useForm<z.infer<typeof schema>>({
+        resolver: zodResolver(schema),
     });
     const [conferences, setConferences] = useState<
         { id: string; name: string }[]
@@ -71,17 +93,42 @@ export function PresForm() {
 
         fetchConferences();
     }, []);
+    const [openPopup, setOpenPopup] = useAtom(openPopupAtom);
 
-    const onSubmit = async (data: z.infer<typeof formPresSchema>) => {
-        toast.success("Vytvoreno");
-        console.log("Selected Conference ID:", data);
-        const createPress = await createPresentation(data);
-        console.log(createPress);
-    };
+    async function onSubmit(values: z.infer<typeof formPresSchema>) {
+        setLoading(true);
+        console.log(values);
+        try {
+            let status;
+            if (edit && pres) {
+                status = await editPresentation(values, pres);
+            } else {
+                status = await createPresentation(values);
+            }
+            if (status === 200) {
+                console.log("Form Success!");
+                form.reset();
+                setOpenPopup(false);
+                // window.location.reload();
+                toast.success("prezentace uspesne vytvorena");
+            } else {
+                console.log("Form Error!");
+                form.setError("name", {
+                    type: "manual",
+                    message: "An error occurred. Please try again later.",
+                });
+            }
+        } catch (error) {
+            console.error("Submission error:", error);
+        } finally {
+            setLoading(false);
+        }
+    }
 
     if (loading) {
         return <div>Loading...</div>; // Loading state can be more stylized
     }
+    console.log(Cname);
 
     return (
         <Form {...form}>
@@ -91,7 +138,7 @@ export function PresForm() {
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Název Konference</FormLabel>
+                            <FormLabel>Název Prezentace</FormLabel>
                             <FormControl>
                                 <Input {...field} />
                             </FormControl>
@@ -101,102 +148,116 @@ export function PresForm() {
                 />
                 <FormField
                     control={form.control}
-                    name="conference"
+                    name="desc"
                     render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                            <FormLabel>Conference</FormLabel>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <FormControl>
-                                        <Button
-                                            variant="outline"
-                                            role="combobox"
-                                            className={cn(
-                                                "w-[200px] justify-between",
-                                                !field.value &&
-                                                    "text-muted-foreground",
-                                            )}
-                                        >
-                                            {field.value
-                                                ? conferences.find(
-                                                      (conf) =>
-                                                          conf.id ===
-                                                          field.value,
-                                                  )?.name
-                                                : "Select conference"}
-                                            <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                        </Button>
-                                    </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent className="w-[200px] p-0">
-                                    <Command>
-                                        <CommandInput
-                                            placeholder="Search conference..."
-                                            className="h-9"
-                                        />
-                                        <CommandList>
-                                            <CommandEmpty>
-                                                No conference found.
-                                            </CommandEmpty>
-                                            <CommandGroup>
-                                                {conferences.map(
-                                                    (conference) => (
-                                                        <CommandItem
-                                                            value={
-                                                                conference.name
-                                                            }
-                                                            key={conference.id}
-                                                            onSelect={() => {
-                                                                form.setValue(
-                                                                    "conference",
-                                                                    conference.id, // Set conference ID instead of value
-                                                                );
-                                                            }}
-                                                        >
-                                                            {conference.name}
-                                                            <CheckIcon
-                                                                className={cn(
-                                                                    "ml-auto h-4 w-4",
-                                                                    conference.id ===
-                                                                        field.value
-                                                                        ? "opacity-100"
-                                                                        : "opacity-0",
-                                                                )}
-                                                            />
-                                                        </CommandItem>
-                                                    ),
-                                                )}
-                                            </CommandGroup>
-                                        </CommandList>
-                                    </Command>
-                                </PopoverContent>
-                            </Popover>
-                            <FormDescription>
-                                This is the conference that will be used in the
-                                dashboard.
-                            </FormDescription>
+                        <FormItem>
+                            <FormLabel>Popis Prezentace</FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
                             <FormMessage />
-                            <FormField
-                                control={form.control}
-                                name="content"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Content</FormLabel>
-                                        <FormControl>
-                                            <Textarea
-                                                placeholder="Tell us a little bit about yourself"
-                                                className="resize-none"
-                                                {...field}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Submit</Button>
+                <FormField
+                    control={form.control}
+                    name="content"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Obsah Prezentace</FormLabel>
+                            <FormControl>
+                                <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                {!edit && (
+                    <FormField
+                        control={form.control}
+                        name="conference"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                                <FormLabel>Conference</FormLabel>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button
+                                                variant="outline"
+                                                role="combobox"
+                                                className={cn(
+                                                    "w-[200px] justify-between",
+                                                    !field.value &&
+                                                        "text-muted-foreground",
+                                                )}
+                                            >
+                                                {field.value
+                                                    ? conferences.find(
+                                                          (conf) =>
+                                                              conf.id ===
+                                                              field.value,
+                                                      )?.name
+                                                    : Cname
+                                                    ? Cname
+                                                    : "Select conference"}
+                                                <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+
+                                    <PopoverContent className="w-[200px] p-0">
+                                        <Command>
+                                            <CommandInput
+                                                placeholder="Search conference..."
+                                                className="h-9"
+                                            />
+                                            <CommandList>
+                                                <CommandEmpty>
+                                                    No conference found.
+                                                </CommandEmpty>
+                                                <CommandGroup>
+                                                    {conferences.map(
+                                                        (conference) => (
+                                                            <CommandItem
+                                                                value={
+                                                                    conference.name
+                                                                }
+                                                                key={
+                                                                    conference.id
+                                                                }
+                                                                onSelect={() => {
+                                                                    form.setValue(
+                                                                        "conference",
+                                                                        conference.id, // Set conference ID instead of value
+                                                                    );
+                                                                }}
+                                                            >
+                                                                {
+                                                                    conference.name
+                                                                }
+                                                                <CheckIcon
+                                                                    className={cn(
+                                                                        "ml-auto h-4 w-4",
+                                                                        conference.id ===
+                                                                            field.value
+                                                                            ? "opacity-100"
+                                                                            : "opacity-0",
+                                                                    )}
+                                                                />
+                                                            </CommandItem>
+                                                        ),
+                                                    )}
+                                                </CommandGroup>
+                                            </CommandList>
+                                        </Command>
+                                    </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                )}
+                <Button type="submit">{edit ? "Upravit" : "Vytvořit"}</Button>
             </form>
         </Form>
     );

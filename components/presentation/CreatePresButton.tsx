@@ -11,10 +11,21 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { PresForm } from "./PresForm";
+import { useAtom } from "jotai";
+import { openPopupAtom } from "@/app/userAtom";
 
-function CreatePresButton({ classNameTrig }: { classNameTrig: string }) {
+function CreatePresButton({
+    classNameTrig,
+    conf,
+    name,
+}: {
+    classNameTrig: string;
+    conf?: string;
+    name?: string;
+}) {
+    const [openPopup, setOpenPopup] = useAtom(openPopupAtom);
     return (
-        <Dialog>
+        <Dialog open={openPopup} onOpenChange={setOpenPopup}>
             <DialogTrigger className={classNameTrig}>
                 <CirclePlus size={36} absoluteStrokeWidth />
             </DialogTrigger>
@@ -23,7 +34,7 @@ function CreatePresButton({ classNameTrig }: { classNameTrig: string }) {
                     <DialogTitle>Vytvor Prezentaci</DialogTitle>
                     <DialogDescription></DialogDescription>
                 </DialogHeader>
-                <PresForm />
+                <PresForm edit={false} conf={conf} Cname={name} />
             </DialogContent>
         </Dialog>
     );

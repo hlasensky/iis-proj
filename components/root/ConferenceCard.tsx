@@ -31,10 +31,7 @@ async function ConferenceCard({
         <Card className="w-3/4 mx-auto my-6">
             <CardHeader className="flex flex-row items-center justify-between">
                 <h2 className="text-xl font-semibold">{conference.name}</h2>
-                <ConferencesButtons
-                    id={conference.id}
-                    name={conference.name}
-                />
+                <ConferencesButtons id={conference.id} name={conference.name} />
             </CardHeader>
             <CardContent>
                 <div>

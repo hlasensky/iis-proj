@@ -1,10 +1,14 @@
 "use server";
+"use server";
 
 import { prisma } from "@/lib/prisma";
 
 import { getSessionUser } from "./actions";
 import { formPresSchema } from "@/components/presentation/PresForm";
 import { z } from "zod";
+import { getConferences } from "./conferenceActions";
+import { Conference } from "@prisma/client";
+import { Presentation } from "@prisma/client";
 
 export async function createPresentation(
     values: z.infer<typeof formPresSchema>,
@@ -13,18 +17,26 @@ export async function createPresentation(
     if (!user) {
         return null;
     }
-    console.log(values);
-    const conference = await prisma.presentation.create({
+    const conference = (await getConferences(values.conference)) as Conference;
+    if (!conference) {
+        return null;
+    }
+    const presentation = await prisma.presentation.create({
         data: {
             name: values.name,
-            evaluated: false,
-            creatorId: user?.id,
+            description: values.desc,
             content: values.content,
             conferenceId: values.conference,
+            evaluated: null,
+            creatorId: user?.id,
+            start: conference.startTime,
+            end: new Date(
+                new Date(conference.startTime).getTime() + 1 * 60 * 60 * 1000,
+            ).toISOString(),
         },
     });
 
-    if (conference) return 200;
+    if (presentation) return 200;
     return null;
 }
 
@@ -55,7 +67,7 @@ export async function getPresentations(conferenceId: string) {
 export async function getUserPresentations() {
     const user = await getSessionUser();
     if (!user) {
-        return null;
+        return [];
     }
 
     const orders = await prisma.order.findMany({
@@ -92,4 +104,44 @@ export async function getUserPresentations() {
     }
 
     return conferences;
+}
+
+export async function getCreatorPresentations() {
+    const user = await getSessionUser();
+    if (!user) {
+        return [];
+    }
+    const presentations = await prisma.presentation.findMany({
+        where: {
+            creatorId: user.id,
+        },
+    });
+    return presentations;
+}
+
+export async function deletePresentation(presentationId: string) {
+    const presentations = await prisma.presentation.delete({
+        where: {
+            id: presentationId,
+        },
+    });
+}
+
+export async function editPresentation(
+    values: z.infer<typeof formPresSchema>,
+    pres: Presentation,
+) {
+    const presentation = await prisma.presentation.update({
+        where: {
+            id: pres.id,
+        },
+        data: {
+            name: values.name,
+            description: values.desc,
+            content: values.content,
+        },
+    });
+
+    if (presentation) return 200;
+    return null;
 }
