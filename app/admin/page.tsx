@@ -25,7 +25,9 @@ async function Page() {
 
     return (
         <section className="container mx-auto py-10 grid gap-7">
+            <h2 className="text-xl">Orders</h2>
             <DataTable columns={orderColumns} data={orders} />
+            <h2 className="text-xl">Users</h2>
             <DataTable columns={columns} data={users} />
         </section>
     );
