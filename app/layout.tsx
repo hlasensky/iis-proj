@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
+import 'react-time-picker/dist/TimePicker.css';
+import 'react-clock/dist/Clock.css';
+
 import SessionProviderWrapper from "@/lib/providers/SessionProviderWrapper";
 import { Toaster } from "sonner";
 import Nav from "@/components/Nav";

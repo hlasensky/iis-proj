@@ -11,11 +11,57 @@ import {
     SelectTrigger,
     SelectValue,
 } from "../ui/select";
-import { Input } from "../ui/input";
 import { useEffect, useState } from "react";
-import { getConferences, getRooms } from "@/actions/conferenceActions";
+import { Trash2 } from "lucide-react";
+import { Button } from "../ui/button";
+import {
+    addRoomToPresentation,
+    deletePresentation,
+} from "@/actions/presentationActions";
+import TimePicker from "react-time-picker";
+import { getRooms } from "@/actions/conferenceActions";
 
-type CellProps = Presentation & { conference: Conference } & { creator: users };
+type CellProps = Presentation & { conference: Conference } & {
+    creator: users;
+} & { room: Room | null };
+
+const DelUserCell = (data: CellContext<CellProps, unknown>) => {
+    return (
+        <Button
+            variant="destructive"
+            onClick={async () => {
+                toast.promise(
+                    new Promise(async (resolve, reject) => {
+                        try {
+                            const response = await deletePresentation(
+                                data.row.getValue("id"),
+                            );
+                            if (response === 200) {
+                                resolve("Presentation deleted");
+                                
+                            } else if (!response) {
+                                reject(
+                                    "Failed to delete presentation: Presentation not found",
+                                );
+                            } else {
+                                reject("Failed to delete presentation");
+                            }
+                        } catch (e) {
+                            reject("Failed to delete presentation " + e);
+                        }
+                    }),
+                    {
+                        loading: "Deleting presentation...",
+                        success: "Presentation deleted",
+                        error: (err) => err,
+                    },
+                );
+            }}
+        >
+            <Trash2 />
+        </Button>
+    );
+};
 
 const ChangeStatusCell = (data: CellContext<CellProps, unknown>) => {
     return (
@@ -50,9 +96,18 @@ const ChangeStatusCell = (data: CellContext<CellProps, unknown>) => {
             }
         >
             <SelectTrigger id="evaluated">
-                <SelectValue placeholder="Not evaluated" />
+                <SelectValue
+                    placeholder={
+                        data.row.original.evaluated ? "Allowed" : "Disallowed"
+                    }
+                />
             </SelectTrigger>
-            <SelectContent position="popper">
+            <SelectContent
+                position="popper"
+                defaultValue={
+                    data.row.original.evaluated ? "allow" : "disallow"
+                }
+            >
                 <SelectItem value="allow">Allow</SelectItem>
                 <SelectItem value="disallow">Disallow</SelectItem>
             </SelectContent>
@@ -81,26 +136,24 @@ const timeStringToDate = (timeStr: string): Date => {
 
 const AddStartTimeCell = (data: CellContext<CellProps, unknown>) => {
     const [startTime, setStartTime] = useState("");
-    const [conference, setConference] = useState<Conference | null>(null);
 
     useEffect(() => {
-        const fetchConference = async () => {
-            const conference = await getConferences(
-                data.row.original.conferenceId,
-            );
-            setConference(conference as Conference);
-        };
-        fetchConference();
-    }, [data.row.original, data.row.original.conferenceId]);
+        const startDate = data.row.original.start
+            ? new Date(data.row.original.start)
+            : new Date();
+        setStartTime(
+            `${String(startDate.getHours()).padStart(2, "0")}:${String(
+                startDate.getMinutes(),
+            ).padStart(2, "0")}`,
+        );
+    }, [data.row.original.start]);
 
-    const handleStartTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const roundedTime = roundToNearestFiveMinutes(e.currentTarget.value);
+    const handleStartTimeChange = (value: unknown) => {
+        const roundedTime = roundToNearestFiveMinutes(value as string);
         const startDate = timeStringToDate(roundedTime);
 
-        console.log(conference);
-
         // Validate if the end time is after the start time
-        if (!conference || startDate < conference.startTime) {
+        if (startDate < data.row.original.conference.startTime) {
             toast.error("End time must be after the start time.");
             return;
         }
@@ -108,50 +161,60 @@ const AddStartTimeCell = (data: CellContext<CellProps, unknown>) => {
         setStartTime(roundedTime);
 
         // Assign the converted Date object to the row data
-        data.row.original.start = startDate
+        data.row.original.start = startDate;
     };
 
     return (
-        <Input
-            type="time"
-            step={300}
-            min="00:00"
-            max="23:59"
-            value={startTime}
+        <TimePicker
+            className={"w-full"}
             onChange={handleStartTimeChange}
+            disableClock
+            clearIcon={null}
+            value={startTime}
+            maxDetail="minute"
+            minTime={`${String(
+                data.row.original.conference.startTime.getHours(),
+            ).padStart(2, "0")}:${String(
+                data.row.original.conference.startTime.getMinutes(),
+            ).padStart(2, "0")}:00`}
+            maxTime={`${String(
+                data.row.original.conference.endTime.getHours(),
+            ).padStart(2, "0")}:${String(
+                data.row.original.conference.endTime.getMinutes(),
+            ).padStart(2, "0")}`}
         />
     );
 };
 
 const AddEndTimeCell = (data: CellContext<CellProps, unknown>) => {
     const [endTime, setEndTime] = useState(""); // default at least 5 minutes after 00:00
-    const [conference, setConference] = useState<Conference | null>(null);
 
     useEffect(() => {
-        const fetchConference = async () => {
-            const conference = await getConferences(
-                data.row.original.conferenceId,
-            );
-            setConference(conference as Conference);
-        };
-        fetchConference();
-    }, [data.row.original, data.row.original.conferenceId]);
+        const endDate = data.row.original.start
+            ? new Date(
+                  new Date(data.row.original.start).getTime() +
+                      1 * 60 * 60 * 1000,
+              )
+            : new Date();
+        setEndTime(
+            `${String(endDate.getHours()).padStart(2, "0")}:${String(
+                endDate.getMinutes(),
+            ).padStart(2, "0")}`,
+        );
+    }, [data.row.original.start]);
 
-    const handleEndTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const roundedTime = roundToNearestFiveMinutes(e.currentTarget.value);
+    const handleEndTimeChange = (value: unknown) => {
+        const roundedTime = roundToNearestFiveMinutes(value as string);
 
         const startDate = data.row.original.start;
         const endDate = timeStringToDate(roundedTime);
 
-        console.log(conference);
-
         // Validate if the end time is after the start time
         if (
             !startDate ||
-            !conference ||
             endDate <= startDate ||
-            startDate < conference.startTime ||
-            endDate > conference.endTime
+            startDate < data.row.original.conference.startTime ||
+            endDate > data.row.original.conference.endTime
         ) {
             toast.error("End time must be after the start time.");
             return;
@@ -164,13 +227,23 @@ const AddEndTimeCell = (data: CellContext<CellProps, unknown>) => {
     };
 
     return (
-        <Input
-            type="time"
-            step={300}
-            min="00:05"
-            max="23:59"
-            value={endTime}
+        <TimePicker
+            className={"w-full"}
             onChange={handleEndTimeChange}
+            disableClock
+            clearIcon={null}
+            value={endTime}
+            maxDetail="minute"
+            minTime={`${String(
+                data.row.original.conference.startTime.getHours(),
+            ).padStart(2, "0")}:${String(
+                data.row.original.conference.startTime.getMinutes(),
+            ).padStart(2, "0")}:00`}
+            maxTime={`${String(
+                data.row.original.conference.endTime.getHours(),
+            ).padStart(2, "0")}:${String(
+                data.row.original.conference.endTime.getMinutes(),
+            ).padStart(2, "0")}`}
         />
     );
 };
@@ -189,12 +262,27 @@ const AddRoomCell = (data: CellContext<CellProps, unknown>) => {
     return (
         <Select
             disabled={!rooms?.length}
-            onValueChange={(val) => {
-                console.log(val);
+            onValueChange={async (val) => {
+                const res = await addRoomToPresentation(
+                    data.row.original.id,
+                    val as string,
+                );
+
+                if (res === 200) {
+                    toast.success("Room added to presentation");
+                } else {
+                    toast.error("Failed to add room to presentation");
+                }
             }}
         >
             <SelectTrigger id="room">
-                <SelectValue placeholder="Select room" />
+                <SelectValue
+                    placeholder={
+                        data.row.original.room
+                            ? data.row.original.room.name
+                            : "Select room"
+                    }
+                />
             </SelectTrigger>
             <SelectContent position="popper">
                 {rooms &&
@@ -244,5 +332,10 @@ export const presentationsColumns: ColumnDef<CellProps>[] = [
         accessorKey: "paymentStatus",
         header: "Stav platby",
         cell: ChangeStatusCell,
+    },
+    {
+        accessorKey: "id",
+        header: "Delete",
+        cell: DelUserCell,
     },
 ];

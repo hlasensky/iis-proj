@@ -125,6 +125,26 @@ export async function deletePresentation(presentationId: string) {
             id: presentationId,
         },
     });
+
+    if (presentations) return 200;
+    return null;
+}
+
+export async function addRoomToPresentation(
+    presentationId: string,
+    roomId: string,
+) {
+    const presentation = await prisma.presentation.update({
+        where: {
+            id: presentationId,
+        },
+        data: {
+            roomId: roomId,
+        },
+    });
+
+    if (presentation) return 200;
+    return null;
 }
 
 export async function editPresentation(

@@ -1,4 +1,4 @@
-export const revalidate = 1;
+"use server";
 
 import React from "react";
 import { columns } from "@/components/userTable/Column";
@@ -7,6 +7,8 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/actions/actions";
 import { orderColumns } from "@/components/userTable/OrderColumns";
+import { presentationsColumns } from "@/components/userTable/PresentationsColumns";
+
 
 async function Page() {
     const sessionUser = await getSessionUser();
@@ -22,6 +24,13 @@ async function Page() {
             users: true,
         },
     });
+    const presentations = await prisma.presentation.findMany({
+        include: {
+            conference: true,
+            creator: true,
+            room: true,
+        },
+    });
 
     return (
         <section className="container mx-auto py-10 grid gap-7">
@@ -29,6 +38,8 @@ async function Page() {
             <DataTable columns={orderColumns} data={orders} />
             <h2 className="text-xl">Users</h2>
             <DataTable columns={columns} data={users} />
+            <h2 className="text-xl">Presentations</h2>
+            <DataTable columns={presentationsColumns} data={presentations} />
         </section>
     );
 }

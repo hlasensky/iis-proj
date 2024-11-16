@@ -52,8 +52,6 @@ const DelUserCell = (data: CellProps) => {
 
 const ChangeRoleCell = (data: CellProps) => {
 	let originalRole = data.cell.getValue() as string;
-	console.log(originalRole);
-
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger className="border rounded p-2 hover:bg-slate-300">
