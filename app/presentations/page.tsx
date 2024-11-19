@@ -6,10 +6,19 @@ import { getCreatorPresentations } from "@/actions/presentationActions";
 import PressCard from "@/components/presentation/PressCard";
 import { getUserConferences } from "@/actions/conferenceActions";
 import { Presentation } from "@prisma/client";
+import { authOptions } from "@/utils/authOptions";
+import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
 
 async function Presantations() {
-    const creatorPres = await getCreatorPresentations();
+    const session = await getServerSession(authOptions);
 
+    if (!session) {
+        redirect("/");
+    }
+
+
+    const creatorPres = await getCreatorPresentations();
     const conferences = await getUserConferences();
 
     const presentationsMap: Record<string, Presentation[]> = {};
