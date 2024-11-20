@@ -33,7 +33,7 @@ function CalendarView({
     })[];
     conferenceStart: Date;
     conferenceEnd: Date;
-    isProgram: Boolean;
+    isProgram: boolean;
 }) {
     const calculate5MinuteIntervals = (date: Date) =>
         Math.round((date.getMinutes() + date.getHours() * 60) / 5);
@@ -52,8 +52,6 @@ function CalendarView({
 
     const timeSpan = conferenceEnd.getTime() - conferenceStart.getTime();
     const timeSpanIn5Minutes = timeSpan / 1000 / 60 / 5;
-
-    const rooms = presentations.map((p) => p.room);
 
     const timeLabels = generateTimeLabels();
     const [minutes, setMinutes] = useState(
@@ -82,7 +80,7 @@ function CalendarView({
         >
             {/* Presentations Grid */}
             <div
-                className={`grid grid-rows-[repeat(${timeSpanIn5Minutes},minmax(0,1fr))] grid-cols-[auto_auto_1fr]`}
+                className={`grid grid-rows-[repeat(${timeSpanIn5Minutes},minmax(0,1fr))] grid-cols-[auto_1fr_1fr]`}
                 style={{ columnGap: "5px" }}
             >
                 {/* Time labels */}
@@ -137,12 +135,6 @@ function CalendarView({
                             presentation={presentation}
                             rowStart={rowStart - conferenceStartIn5Minutes}
                             rowSpan={rowSpan}
-                            colStart={
-                                rooms.findIndex(
-                                    (room) =>
-                                        room?.id === presentation.room?.id,
-                                ) + 3
-                            }
                             isProgram={isProgram}
                         />
                     );

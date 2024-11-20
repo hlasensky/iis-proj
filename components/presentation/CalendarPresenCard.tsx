@@ -14,7 +14,6 @@ function CalendarPresenCard({
     presentation,
     rowStart,
     rowSpan,
-    colStart,
     isProgram,
 }: {
     presentation: Presentation & {
@@ -25,8 +24,7 @@ function CalendarPresenCard({
     };
     rowStart: number;
     rowSpan: number;
-    colStart: number;
-    isProgram: Boolean;
+    isProgram: boolean;
 }) {
     const [selected, setSelected] = useAtom(selectedPresentationAtom);
 
@@ -36,7 +34,6 @@ function CalendarPresenCard({
             style={{
                 gridRowStart: 1 + rowStart,
                 gridRowEnd: 1 + rowStart + rowSpan,
-                gridColumnStart: colStart,
             }}
             className={cn(
                 "bg-slate-200 my-1",

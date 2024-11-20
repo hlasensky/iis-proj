@@ -35,28 +35,20 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
     return (
         <div className="flex gap-4 justify-between ">
-            <Card className="m-4 ">
+            <Card className="m-4">
                 <CardHeader>
                     <h1>{conference.name}</h1>
                     <CardDescription>{conference.description}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <label htmlFor="startTime">Start time:</label>
-                    <input
-                        name="startTime"
-                        type="datetime-local"
-                        className="w-fit text-center"
-                        value={conference.startTime.toISOString().slice(0, 16)}
-                        disabled
-                    />
-                    <label htmlFor="endTime">End time:</label>
-                    <input
-                        name="endTime"
-                        type="datetime-local"
-                        className="w-fit text-center"
-                        value={conference.endTime.toISOString().slice(0, 16)}
-                        disabled
-                    />
+                    <h2>Start time:</h2>
+                    {conference.startTime.toLocaleTimeString() +
+                        " " +
+                        conference.startTime.toLocaleDateString()}
+                    <h2>End time:</h2>
+                    {conference.endTime.toLocaleTimeString() +
+                        " " +
+                        conference.endTime.toLocaleDateString()}
                 </CardContent>
             </Card>
             <CalendarView
