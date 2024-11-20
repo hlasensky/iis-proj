@@ -201,4 +201,6 @@ export async function deleteConference(conferenceId: string) {
             id: conferenceId,
         },
     });
+    if (conferences) return 200;
+    return null;
 }

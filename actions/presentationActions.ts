@@ -165,3 +165,107 @@ export async function editPresentation(
     if (presentation) return 200;
     return null;
 }
+
+export async function addStartTimeToPresentation(
+    presentationId: string,
+    startTime: string,
+) {
+    try {
+        if (!startTime) {
+            return null;
+        }
+
+        const presentation = await prisma.presentation.findUnique({
+            where: {
+                id: presentationId,
+            },
+            include: {
+                conference: true,
+            },
+        });
+
+        const conference = await prisma.conference.findUnique({
+            where: {
+                id: presentation?.conferenceId,
+            },
+        });
+
+        if (
+            !conference ||
+            (new Date(startTime).getUTCHours() <
+                new Date(conference.startTime).getUTCHours() &&
+                new Date(startTime).getUTCMinutes() <
+                    new Date(conference.startTime).getUTCMinutes())
+        ) {
+            console.error("Invalid start time");
+            return null;
+        }
+
+        const up = await prisma.presentation.update({
+            where: {
+                id: presentationId,
+            },
+            data: {
+                start: startTime,
+            },
+        });
+
+        if (up) return 200;
+        console.error("Failed to add start time to presentation");
+        return null;
+    } catch (error) {
+        console.error("Failed to add start time to presentation:", error);
+        return null;
+    }
+}
+
+export async function addEndTimeToPresentation(
+    presentationId: string,
+    endTime: string,
+) {
+    try {
+        if (!endTime) {
+            return null;
+        }
+
+        const presentation = await prisma.presentation.findUnique({
+            where: {
+                id: presentationId,
+            },
+            include: {
+                conference: true,
+            },
+        });
+
+        const conference = await prisma.conference.findUnique({
+            where: {
+                id: presentation?.conferenceId,
+            },
+        });
+
+        if (
+            !conference ||
+            (new Date(endTime).getUTCHours() >
+                new Date(conference.endTime).getUTCHours() &&
+                new Date(endTime).getUTCMinutes() >
+                    new Date(conference.endTime).getUTCMinutes())
+        ) {
+            return null;
+        }
+
+        const up = await prisma.presentation.update({
+            where: {
+                id: presentationId,
+            },
+            data: {
+                end: endTime,
+            },
+        });
+
+        if (up) return 200;
+        return null;
+    } catch (error) {
+        console.error("Failed to add end time to presentation:", error);
+        return null;
+    }
+}

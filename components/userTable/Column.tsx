@@ -14,10 +14,12 @@ import { changeRole, deleteUser } from "@/actions/adminActions";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type CellProps = CellContext<users, unknown>;
 
 const DelUserCell = (data: CellProps) => {
+	const router = useRouter();
 	return (
 		<Button
 			variant="destructive"
@@ -28,6 +30,7 @@ const DelUserCell = (data: CellProps) => {
 							const response = await deleteUser(data.row.getValue("email"));
 							if (response === 200) {
 								resolve("User deleted");
+								router.refresh();
 							} else if (!response) {
 								reject("Failed to delete user: User not found");
 							} else {

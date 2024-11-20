@@ -15,17 +15,23 @@ import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { Button } from "../ui/button";
 import {
+    addEndTimeToPresentation,
     addRoomToPresentation,
+    addStartTimeToPresentation,
     deletePresentation,
 } from "@/actions/presentationActions";
-import TimePicker from "react-time-picker";
 import { getRooms } from "@/actions/conferenceActions";
+import { Popover, PopoverContent } from "../ui/popover";
+import { PopoverTrigger } from "@radix-ui/react-popover";
+import { Input } from "../ui/input";
+import { useRouter } from "next/navigation";
 
 type CellProps = Presentation & { conference: Conference } & {
     creator: users;
 } & { room: Room | null };
 
 const DelUserCell = (data: CellContext<CellProps, unknown>) => {
+    const router = useRouter();
     return (
         <Button
             variant="destructive"
@@ -38,7 +44,7 @@ const DelUserCell = (data: CellContext<CellProps, unknown>) => {
                             );
                             if (response === 200) {
                                 resolve("Presentation deleted");
-                                
+                                router.refresh();
                             } else if (!response) {
                                 reject(
                                     "Failed to delete presentation: Presentation not found",
@@ -115,136 +121,176 @@ const ChangeStatusCell = (data: CellContext<CellProps, unknown>) => {
     );
 };
 
-const roundToNearestFiveMinutes = (timeStr: string): string => {
-    const [hours, minutes] = timeStr.split(":").map(Number);
+const roundToNearestFiveMinutes = (time: Date): Date => {
+    if (!time) {
+        return new Date();
+    }
+    const hours = (time as Date).getHours();
+    const minutes = (time as Date).getMinutes();
     const roundedMinutes = Math.round(minutes / 5) * 5;
     const formattedMinutes =
         roundedMinutes === 60 ? "00" : String(roundedMinutes).padStart(2, "0");
-    const formattedHours = (roundedMinutes === 60 ? hours + 1 : hours)
+    const formatedHours = (roundedMinutes === 60 ? hours + 1 : hours)
         .toString()
         .padStart(2, "0");
-    return `${formattedHours}:${formattedMinutes}`;
+
+    const date = new Date();
+    date.setHours(Number(formatedHours), Number(formattedMinutes), 0, 0);
+    return date;
 };
 
-// Converts a time string ("HH:MM") to a Date object for today’s date
-const timeStringToDate = (timeStr: string): Date => {
-    const [hours, minutes] = timeStr.split(":").map(Number);
+const stringToDate = (time: string): Date => {
+    const [hours, minutes] = time.split(":").map((item) => parseInt(item));
     const date = new Date();
     date.setHours(hours, minutes, 0, 0);
     return date;
 };
 
 const AddStartTimeCell = (data: CellContext<CellProps, unknown>) => {
-    const [startTime, setStartTime] = useState("");
+    const [startT, setStartT] = useState(
+        data.row.original.start
+            ?.toLocaleTimeString()
+            .split(":")
+            .slice(0, 2)
+            .map((item) => item.padStart(2, "0"))
+            .join(":") || "",
+    );
 
     useEffect(() => {
-        const startDate = data.row.original.start
-            ? new Date(data.row.original.start)
-            : new Date();
-        setStartTime(
-            `${String(startDate.getHours()).padStart(2, "0")}:${String(
-                startDate.getMinutes(),
-            ).padStart(2, "0")}`,
+        setStartT(
+            data.row.original.start
+                ?.toLocaleTimeString()
+                .split(":")
+                .slice(0, 2)
+                .map((item) => item.padStart(2, "0"))
+                .join(":") || "",
         );
     }, [data.row.original.start]);
 
-    const handleStartTimeChange = (value: unknown) => {
-        const roundedTime = roundToNearestFiveMinutes(value as string);
-        const startDate = timeStringToDate(roundedTime);
+    const handleStartTimeChange = () => {
+        const roundedTime = roundToNearestFiveMinutes(stringToDate(startT));
 
         // Validate if the end time is after the start time
-        if (startDate < data.row.original.conference.startTime) {
-            toast.error("End time must be after the start time.");
-            return;
-        }
+        // if (startDate < data.row.original.conference.startTime) {
+        //     toast.error("End time must be after the start time.");
+        //     return;
+        // }
 
-        setStartTime(roundedTime);
+        const updateDate = async () => {
+            const res = await addStartTimeToPresentation(
+                data.row.original.id,
+                roundedTime.toISOString(),
+            );
+            if (res === 200) {
+                toast.success("Start time updated");
+                data.row.original.start = roundedTime;
+            } else {
+                toast.error("Failed to update start time");
+            }
+        };
+        updateDate();
 
         // Assign the converted Date object to the row data
-        data.row.original.start = startDate;
     };
 
+    // const localConferenceStartTime = new Date(
+    //     data.row.original.conference.startTime.toLocaleDateString(),
+    // );
+    // const localConferenceEndTime = new Date(
+    //     data.row.original.conference.endTime.toLocaleDateString(),
+    // );
+
     return (
-        <TimePicker
-            className={"w-full"}
-            onChange={handleStartTimeChange}
-            disableClock
-            clearIcon={null}
-            value={startTime}
-            maxDetail="minute"
-            minTime={`${String(
-                data.row.original.conference.startTime.getHours(),
-            ).padStart(2, "0")}:${String(
-                data.row.original.conference.startTime.getMinutes(),
-            ).padStart(2, "0")}:00`}
-            maxTime={`${String(
-                data.row.original.conference.endTime.getHours(),
-            ).padStart(2, "0")}:${String(
-                data.row.original.conference.endTime.getMinutes(),
-            ).padStart(2, "0")}`}
-        />
+        <Popover>
+            <PopoverTrigger>
+                {startT
+                    ? startT
+                    : "Select start time"}
+            </PopoverTrigger>
+            <PopoverContent>
+                <Input
+                    type="time"
+                    value={startT}
+                    onChange={(e) => setStartT(e.currentTarget.value)}
+                />
+
+                <Button onClick={handleStartTimeChange}>Submit</Button>
+            </PopoverContent>
+        </Popover>
     );
 };
 
 const AddEndTimeCell = (data: CellContext<CellProps, unknown>) => {
-    const [endTime, setEndTime] = useState(""); // default at least 5 minutes after 00:00
+    const [endT, setEndT] = useState(
+        data.row.original.end
+            ?.toLocaleTimeString()
+            .split(":")
+            .slice(0, 2)
+            .map((item) => item.padStart(2, "0"))
+            .join(":") || "",
+    );
 
     useEffect(() => {
-        const endDate = data.row.original.start
-            ? new Date(
-                  new Date(data.row.original.start).getTime() +
-                      1 * 60 * 60 * 1000,
-              )
-            : new Date();
-        setEndTime(
-            `${String(endDate.getHours()).padStart(2, "0")}:${String(
-                endDate.getMinutes(),
-            ).padStart(2, "0")}`,
+        setEndT(
+            data.row.original.end
+                ?.toLocaleTimeString()
+                .split(":")
+                .slice(0, 2)
+                .map((item) => item.padStart(2, "0"))
+                .join(":") || "",
         );
-    }, [data.row.original.start]);
+    }, [data.row.original.end]);
 
-    const handleEndTimeChange = (value: unknown) => {
-        const roundedTime = roundToNearestFiveMinutes(value as string);
-
-        const startDate = data.row.original.start;
-        const endDate = timeStringToDate(roundedTime);
+    const handleEndTimeChange = () => {
+        const roundedTime = roundToNearestFiveMinutes(stringToDate(endT));
 
         // Validate if the end time is after the start time
-        if (
-            !startDate ||
-            endDate <= startDate ||
-            startDate < data.row.original.conference.startTime ||
-            endDate > data.row.original.conference.endTime
-        ) {
-            toast.error("End time must be after the start time.");
-            return;
-        }
+        // if (
+        //     !startDate ||
+        //     endDate <= startDate ||
+        //     startDate < data.row.original.conference.startTime ||
+        //     endDate > data.row.original.conference.endTime
+        // ) {
+        //     toast.error("End time must be after the start time.");
+        //     return;
+        // }
 
-        setEndTime(roundedTime);
+        const updateDate = async () => {
+            const res = await addEndTimeToPresentation(
+                data.row.original.id,
+                roundedTime.toISOString(),
+            );
+            if (res === 200) {
+                toast.success("End time updated");
+                data.row.original.end = roundedTime;
+            } else {
+                toast.error("Failed to update end time");
+            }
+        };
+        updateDate();
 
         // Assign the converted Date object to the row data
-        data.row.original.end = endDate;
     };
 
+    // const localConferenceStartTime = new Date(
+    //     data.row.original.conference.startTime.toLocaleDateString(),
+    // );
+    // const localConferenceEndTime = new Date(
+    //     data.row.original.conference.endTime.toLocaleDateString(),
+    // );
+
     return (
-        <TimePicker
-            className={"w-full"}
-            onChange={handleEndTimeChange}
-            disableClock
-            clearIcon={null}
-            value={endTime}
-            maxDetail="minute"
-            minTime={`${String(
-                data.row.original.conference.startTime.getHours(),
-            ).padStart(2, "0")}:${String(
-                data.row.original.conference.startTime.getMinutes(),
-            ).padStart(2, "0")}:00`}
-            maxTime={`${String(
-                data.row.original.conference.endTime.getHours(),
-            ).padStart(2, "0")}:${String(
-                data.row.original.conference.endTime.getMinutes(),
-            ).padStart(2, "0")}`}
-        />
+        <Popover>
+            <PopoverTrigger>{endT ? endT : "Select end time"}</PopoverTrigger>
+            <PopoverContent>
+                <Input
+                    type="time"
+                    value={endT}
+                    onChange={(e) => setEndT(e.currentTarget.value)}
+                />
+                <Button onClick={handleEndTimeChange}>Submit</Button>
+            </PopoverContent>
+        </Popover>
     );
 };
 

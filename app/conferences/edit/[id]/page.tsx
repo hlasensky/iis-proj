@@ -69,7 +69,6 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                             end: conference.endTime.toISOString().slice(11, 16),
                             capacity: conference.capacity.toString(),
                         }}
-                        editID={conference.id}
                     />
                 </TabsContent>
                 <TabsContent value="editPres" className="w-full">
