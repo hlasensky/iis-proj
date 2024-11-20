@@ -184,7 +184,22 @@ export async function addToMyProgram(pres: Presentation) {
                 userId: user.id,
             },
             data: {
-                presentations: {},
+                presentations: {
+                    connect: {
+                        id: pres.id,
+                    },
+                },
+            },
+        });
+    } else {
+        await prisma.program.create({
+            data: {
+                userId: user.id,
+                presentations: {
+                    connect: {
+                        id: pres.id,
+                    },
+                },
             },
         });
     }
