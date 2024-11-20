@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import { Popover, PopoverContent } from "../ui/popover";
 import { PopoverTrigger } from "@radix-ui/react-popover";
 import { Button } from "../ui/button";
+import { addToMyProgram } from "@/actions/presentationActions";
+import { toast } from "sonner";
 
 function CalendarPresenCard({
     presentation,
@@ -27,6 +29,7 @@ function CalendarPresenCard({
     isProgram: Boolean;
 }) {
     const [selected, setSelected] = useAtom(selectedPresentationAtom);
+
     return (
         <Card
             onClick={() => setSelected(presentation)}
@@ -58,7 +61,20 @@ function CalendarPresenCard({
                         <p>{presentation.room?.name}</p>
                     </PopoverContent>
                 </Popover>
-                {isProgram && <Button onClick={}>Add to my program</Button>}
+                {isProgram && (
+                    <Button
+                        onClick={async () => {
+                            const res = await addToMyProgram(presentation);
+                            if (res === 200) {
+                                toast.success("succesfully added");
+                            } else {
+                                toast.error("failed to add");
+                            }
+                        }}
+                    >
+                        Add to my program
+                    </Button>
+                )}
             </CardContent>
         </Card>
     );

@@ -113,8 +113,8 @@ model Presentation {
 model Program {
   id            String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   presentations Presentation[]
-  userId        String         @unique
-  user          users          @relation(fields: [userId], references: [id])
+  userId        String         @db.Uuid @unique
+  user          users          @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@schema("next_auth")
 }
 

@@ -179,7 +179,7 @@ export async function addToMyProgram(pres: Presentation) {
     });
 
     if (program) {
-        await prisma.program.update({
+        const updateProgram = await prisma.program.update({
             where: {
                 userId: user.id,
             },
@@ -191,8 +191,10 @@ export async function addToMyProgram(pres: Presentation) {
                 },
             },
         });
+        if (updateProgram) return 200;
+        return null;
     } else {
-        await prisma.program.create({
+        const updateProgram = await prisma.program.create({
             data: {
                 userId: user.id,
                 presentations: {
@@ -202,5 +204,7 @@ export async function addToMyProgram(pres: Presentation) {
                 },
             },
         });
+        if (updateProgram) return 200;
+        return null;
     }
 }
