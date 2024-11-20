@@ -96,6 +96,7 @@ function ToggleConf({
                         presentations={presentations}
                         conferenceStart={selectedConference.startTime}
                         conferenceEnd={selectedConference.endTime}
+                        isProgram={false}
                     />
                 </div>
             )}

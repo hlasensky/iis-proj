@@ -51,6 +51,9 @@ async function Presantations() {
                 <TabsContent value="zakoupene" className="w-full">
                     <Tabs>
                         <TabsList defaultValue="" className="w-full">
+                            <TabsTrigger value="myProgram" className="w-full">
+                                My program
+                            </TabsTrigger>
                             {conferences.map((conference, i) => (
                                 <TabsTrigger
                                     value={conference.conference.id}
@@ -61,6 +64,9 @@ async function Presantations() {
                                 </TabsTrigger>
                             ))}
                         </TabsList>
+                        <TabsContent value="myProgram" className="w-full">
+                            <p>Hello</p>
+                        </TabsContent>
                         {conferences.map((conference, i) => {
                             const conferencePresentations =
                                 presentationsMap[conference.conference.id] ||
@@ -80,6 +86,7 @@ async function Presantations() {
                                             conference.conference.endTime
                                         }
                                         presentations={conferencePresentations}
+                                        isProgram={true}
                                     />
                                 </TabsContent>
                             );
