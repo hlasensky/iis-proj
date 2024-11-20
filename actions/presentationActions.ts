@@ -165,3 +165,27 @@ export async function editPresentation(
     if (presentation) return 200;
     return null;
 }
+
+export async function addToMyProgram(pres: Presentation) {
+    const user = await getSessionUser();
+    if (!user) {
+        return null;
+    }
+
+    const program = await prisma.program.findUnique({
+        where: {
+            userId: user.id,
+        },
+    });
+
+    if (program) {
+        await prisma.program.update({
+            where: {
+                userId: user.id,
+            },
+            data: {
+                presentations: {},
+            },
+        });
+    }
+}

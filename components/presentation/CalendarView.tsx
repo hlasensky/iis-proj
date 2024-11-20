@@ -23,6 +23,7 @@ function CalendarView({
     presentations,
     conferenceStart,
     conferenceEnd,
+    isProgram,
 }: {
     presentations: (Presentation & {
         room?: Room | null;
@@ -32,6 +33,7 @@ function CalendarView({
     })[];
     conferenceStart: Date;
     conferenceEnd: Date;
+    isProgram: Boolean;
 }) {
     const calculate5MinuteIntervals = (date: Date) =>
         Math.round((date.getMinutes() + date.getHours() * 60) / 5);
@@ -88,7 +90,7 @@ function CalendarView({
                     .fill(null)
                     .slice(conferenceStartIn5Minutes, conferenceEndIn5Minutes)
                     .map((_, i) => {
-                        const key = i + conferenceStartIn5Minutes ;
+                        const key = i + conferenceStartIn5Minutes;
 
                         return (
                             <div
@@ -117,16 +119,14 @@ function CalendarView({
                 ></div>
                 {/* For each presentation, create a card */}
                 {presentations.map((presentation, i) => {
-                    const startMinutes =
-                        presentation.start
-                            ? presentation.start.getMinutes() +
-                              presentation.start.getHours() * 60
-                            : 0;
-                    const endMinutes =
-                        presentation.end
-                            ? presentation.end.getMinutes() +
-                              presentation.end.getHours() * 60
-                            : 0;
+                    const startMinutes = presentation.start
+                        ? presentation.start.getMinutes() +
+                          presentation.start.getHours() * 60
+                        : 0;
+                    const endMinutes = presentation.end
+                        ? presentation.end.getMinutes() +
+                          presentation.end.getHours() * 60
+                        : 0;
 
                     const rowStart = Math.round(startMinutes / 5); // Starting row based on 5-minute intervals
                     const rowSpan = Math.round((endMinutes - startMinutes) / 5); // Row span based on duration
@@ -143,6 +143,7 @@ function CalendarView({
                                         room?.id === presentation.room?.id,
                                 ) + 3
                             }
+                            isProgram={isProgram}
                         />
                     );
                 })}

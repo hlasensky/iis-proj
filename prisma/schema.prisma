@@ -68,6 +68,7 @@ model users {
   accounts      accounts[]
   sessions      sessions[]
   Order         Order[]        @relation("OrderTousers")
+  program       Program?        
 
   @@schema("next_auth")
 }
@@ -104,7 +105,16 @@ model Presentation {
   conference   Conference @relation(fields: [conferenceId], references: [id], onDelete: Cascade)
   creator      users      @relation(fields: [creatorId], references: [id])
   room         Room?      @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  program      Program[]
 
+  @@schema("next_auth")
+}
+
+model Program {
+  id            String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  presentations Presentation[]
+  userId        String         @unique
+  user          users          @relation(fields: [userId], references: [id])
   @@schema("next_auth")
 }
 
