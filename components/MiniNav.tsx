@@ -77,7 +77,13 @@ const RegBtn = ({ session }: { session: Session | null }) => {
     return session ? null : <UserRoundPlus />;
 };
 
-export function NavbarMinimal({ session }: { session: Session | null }) {
+export function NavbarMinimal({
+    session,
+    user,
+}: {
+    session: Session | null;
+    user: { id: string | null; role: string | null; admin: boolean };
+}) {
     const router = useRouter();
     const [active, setActive] = useState(0);
     const path = usePathname();
@@ -90,7 +96,7 @@ export function NavbarMinimal({ session }: { session: Session | null }) {
             label: "Prezentace",
             url: "/presentations",
         },
-        { icon: Settings, label: "Admin", url: "/admin" },
+        ...(user.admin ? [{ icon: Settings, label: "Admin", url: "/admin" }] : []),
         ...(session
             ? [{ icon: AccBtn, label: "Účet", url: "/account" }]
             : [
