@@ -14,8 +14,9 @@ function ToggleConf({
     type presType = Presentation & {
         room?: Room | null;
         creator?: {
-            name?: string | null;
+            name: string | null;
         };
+
     };
     const [presentations, setPresentations] = useState<presType[]>([]);
 
@@ -48,7 +49,7 @@ function ToggleConf({
     return (
         <>
             <ToggleGroup type="single">
-                {userOrders.map((order, i) => (
+                {userOrders.map((order) => (
                     <ToggleGroupItem
                         key={order.id}
                         name={order.id}

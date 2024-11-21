@@ -19,7 +19,6 @@ import {
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -67,6 +66,7 @@ type PresFormProps = {
     Cname?: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function PresForm({ edit, pres, conf, Cname }: PresFormProps) {
     const schema = edit ? formPresEditSchema : formPresSchema;
 
@@ -93,17 +93,29 @@ export function PresForm({ edit, pres, conf, Cname }: PresFormProps) {
 
         fetchConferences();
     }, []);
-    const [openPopup, setOpenPopup] = useAtom(openPopupAtom);
+    const [, setOpenPopup] = useAtom(openPopupAtom);
 
-    async function onSubmit(values: z.infer<typeof formPresSchema>) {
+    async function onSubmit(
+        values: z.infer<typeof formPresSchema | typeof formPresEditSchema>,
+    ) {
         setLoading(true);
         console.log(values);
         try {
             let status;
             if (edit && pres) {
-                status = await editPresentation(values, pres);
+                status = await editPresentation(
+                    {
+                        conference: values.conference!,
+                        content: values.content!,
+                        desc: values.desc!,
+                        name: values.name!,
+                    },
+                    pres,
+                );
             } else {
-                status = await createPresentation(values);
+                status = await createPresentation(
+                    values as z.infer<typeof formPresSchema>,
+                );
             }
             if (status === 200) {
                 console.log("Form Success!");

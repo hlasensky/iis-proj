@@ -10,7 +10,6 @@ import {
 import { Presentation } from "@prisma/client";
 import { Button } from "../ui/button";
 import { deletePresentation } from "@/actions/presentationActions";
-import { toast } from "sonner";
 import { PresForm } from "./PresForm";
 
 interface PressCardProps {
