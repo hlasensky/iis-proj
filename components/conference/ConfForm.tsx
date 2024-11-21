@@ -195,7 +195,7 @@ export function ConfForm({
                     ) : success ? (
                         <Check />
                     ) : (
-                        "Vytvorit"
+                        "Continue"
                     )}
                 </Button>
             </form>

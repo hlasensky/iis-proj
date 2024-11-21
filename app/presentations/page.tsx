@@ -1,11 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CreatePresButton from "@/components/presentation/CreatePresButton";
-import { getPresentations } from "@/actions/presentationActions";
+import { GetMyProgram, getPresentations } from "@/actions/presentationActions";
 import CalendarView from "@/components/presentation/CalendarView";
 import { getCreatorPresentations } from "@/actions/presentationActions";
 import PressCard from "@/components/presentation/PressCard";
 import { getUserConferences } from "@/actions/conferenceActions";
-import { Presentation } from "@prisma/client";
+import { Presentation, Room } from "@prisma/client";
 import { authOptions } from "@/utils/authOptions";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -17,11 +17,20 @@ async function Presantations() {
         redirect("/");
     }
 
-
     const creatorPres = await getCreatorPresentations();
     const conferences = await getUserConferences();
 
     const presentationsMap: Record<string, Presentation[]> = {};
+    const userProgramMap: Record<
+        string,
+        Presentation &
+            {
+                room?: Room | null;
+                creator?: {
+                    name: string | null;
+                };
+            }[]
+    > = {};
 
     // Fetch presentations for each conference and store them in the map
     await Promise.all(
@@ -30,6 +39,11 @@ async function Presantations() {
                 conference.conferenceId,
             );
             presentationsMap[conference.conference.id] = presentations;
+            const userProgram = await GetMyProgram(conference.conference.id);
+            if (userProgram)
+                userProgramMap[
+                    conference.conference.startTime.toLocaleDateString()
+                ] = userProgram;
         }),
     );
 
@@ -65,7 +79,20 @@ async function Presantations() {
                             ))}
                         </TabsList>
                         <TabsContent value="myProgram" className="w-full">
-                            <p>Hello</p>
+                            {myProgram ? (
+                                <CalendarView
+                                    conferenceStart={
+                                        new Date("2024-12-15T17:00:00Z")
+                                    }
+                                    conferenceEnd={
+                                        new Date("2024-12-15T17:00:00Z")
+                                    }
+                                    presentations={myProgram.presentations}
+                                    isProgram={true}
+                                />
+                            ) : (
+                                <p>no presentations</p>
+                            )}
                         </TabsContent>
                         {conferences.map((conference, i) => {
                             const conferencePresentations =

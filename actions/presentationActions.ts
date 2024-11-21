@@ -209,6 +209,46 @@ export async function addToMyProgram(pres: Presentation) {
     }
 }
 
+export async function GetMyProgram(conferenceId: string): Presentation  {
+    const user = await getSessionUser();
+    if (!user) {
+        return null;
+    }
+    const program = await prisma.program.findUnique({
+        where: {
+            userId: user.id,
+        },
+    });
+
+    if (program) {
+        const getProgram = await prisma.program.findUnique({
+            where: {
+                userId: user.id,
+            },
+            include: {
+                presentations: {
+                    where: {
+                        conference: {
+                            id: conferenceId,
+                        },
+                    },
+                    include: {
+                        room: true,
+                        creator: {
+                            select: {
+                                name: true,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+        return getProgram;
+    } else {
+        return null;
+    }
+}
+
 export async function addStartTimeToPresentation(
     presentationId: string,
     startTime: string,
