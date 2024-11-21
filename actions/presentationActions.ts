@@ -7,7 +7,7 @@ import { getSessionUser } from "./actions";
 import { formPresSchema } from "@/components/presentation/PresForm";
 import { z } from "zod";
 import { getConferences } from "./conferenceActions";
-import { Conference } from "@prisma/client";
+import { Conference, Room } from "@prisma/client";
 import { Presentation } from "@prisma/client";
 
 export async function createPresentation(
@@ -209,7 +209,13 @@ export async function addToMyProgram(pres: Presentation) {
     }
 }
 
-export async function GetMyProgram(conferenceId: string): Presentation  {
+export type UserProgram = {
+    presentations: (Presentation & { room: Room | null } & {
+        creator: { name: string | null };
+    })[];
+} | null;
+
+export async function GetMyProgram(conferenceId: string): Promise<UserProgram> {
     const user = await getSessionUser();
     if (!user) {
         return null;

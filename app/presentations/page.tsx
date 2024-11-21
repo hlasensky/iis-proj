@@ -5,7 +5,7 @@ import CalendarView from "@/components/presentation/CalendarView";
 import { getCreatorPresentations } from "@/actions/presentationActions";
 import PressCard from "@/components/presentation/PressCard";
 import { getUserConferences } from "@/actions/conferenceActions";
-import { Presentation, Room } from "@prisma/client";
+import { Presentation } from "@prisma/client";
 import { authOptions } from "@/utils/authOptions";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
@@ -21,16 +21,7 @@ async function Presantations() {
     const conferences = await getUserConferences();
 
     const presentationsMap: Record<string, Presentation[]> = {};
-    const userProgramMap: Record<
-        string,
-        Presentation &
-            {
-                room?: Room | null;
-                creator?: {
-                    name: string | null;
-                };
-            }[]
-    > = {};
+    const userProgramMap: Record<string, Presentation[]> = {};
 
     // Fetch presentations for each conference and store them in the map
     await Promise.all(
@@ -40,10 +31,23 @@ async function Presantations() {
             );
             presentationsMap[conference.conference.id] = presentations;
             const userProgram = await GetMyProgram(conference.conference.id);
-            if (userProgram)
-                userProgramMap[
-                    conference.conference.startTime.toLocaleDateString()
-                ] = userProgram;
+            if (userProgram) {
+                const key = conference.conference.startTime.toLocaleDateString();
+                if (!userProgramMap[key]) {
+                    userProgramMap[
+                        key
+                    ] = userProgram.presentations;
+                } else {
+                    userProgramMap[
+                        key
+                    ] = [
+                        ...userProgramMap[
+                            key
+                        ],
+                        ...userProgram.presentations,
+                    ];
+                }
+            }
         }),
     );
 
