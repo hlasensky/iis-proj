@@ -1,6 +1,6 @@
 "use client";
 import { cartAtom } from "@/app/userAtom";
-import { Conference, Order } from "@prisma/client";
+import { Conference } from "@prisma/client";
 import { useAtomValue } from "jotai";
 import React from "react";
 
