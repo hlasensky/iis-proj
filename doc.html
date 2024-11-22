@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="cs" >
+    <head>
+        <meta
+            http-equiv="content-type"
+            content="text/html; charset=utf-8"
+        />
+        <title>Projekt IIS</title>
+        <style type="text/css">
+            table {
+                border-collapse: collapse;
+            }
+            td,
+            th {
+                border: 1px solid black;
+                padding: 0.3em 0.5em;
+                text-align: left;
+            }
+            dt {
+                font-weight: bold;
+                margin-top: 0.5em;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Zkontrolujte prosím nastavení kódování v hlavičce dokumentu 
+     podle použitého editoru -->
+
+        <h1>Konference</h1>
+        <!-- Nahradte názvem svého zadání -->
+
+        <dl>
+            <dt>Autoři</dt>
+            <dd>
+                Tomáš Hlásenský
+                <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+                <a href="mailto:xhlase01@stud.fit.vutbr.cz"
+                    >xhlase01@stud.fit.vutbr.cz</a
+                >
+                <ul>
+                    <li>Technologický základ</li>
+                    <li>Propojení s databází</li>
+                    <li>Implementace Přihlášení</li>
+                    <li>Implementace Administrátora</li>
+                    <li>Implementace Místností</li>
+                    <li>Implementace Košíku</li>
+                </ul>
+            </dd>
+            <dd>
+                Jan Lindovský
+                <!-- Nahraďte skutečným jménem a e-mailem autora a popisem činnosti -->
+                <a href="mailto:xlindo04@stud.fit.vutbr.cz"
+                    >xlindo04@stud.fit.vutbr.cz</a
+                >
+                <ul>
+                    <li>Implementace Programů jednotlivých uživatelů</li>
+                    <li>Implementace Programů jednotlivých konferencí</li>
+                    <li>Implementace Konferencí</li>
+                    <li>Implementace Prezentací</li>
+                    <li>
+                        Implementace Formulářů pro tvorbu Konferencí a
+                        Prezentací
+                    </li>
+                </ul>
+            </dd>
+            <dt>URL aplikace</dt>
+            <dd>
+                <a href="https://iis-proj.vercel.app/"
+                    >https://iis-proj.vercel.app/</a
+                >
+            </dd>
+        </dl>
+
+        <h2>Uživatelé systému pro testování</h2>
+        <p>
+            Uveďte prosím existující zástupce
+            <strong>všech rolí uživatelů</strong>.
+        </p>
+        <table>
+            <tr>
+                <th>example@example.cz</th>
+                <th>12345678</th>
+                <th>User</th>
+            </tr>
+            <tr>
+                <th>admin@admin.cz</th>
+                <th>12345678</th>
+                <td>Administrátor</td>
+            </tr>
+        </table>
+
+        <h3>Video</h3>
+
+        <p>
+            Přiložte odkaz na komentované video demostrující použití
+            informačního systému. Zaměřte se na případy užití definované zadáním
+            (např. registrace uživatele, správa uživatelů a činnosti
+            jednotlivých rolí). Video nahrajte například na VUT Google Drive,
+            kde ho bude možné přímo spustit z odkazu.
+        </p>
+
+        <h2>Implementace</h2>
+        <p>
+            <!--TODO Stručná dokumentace k implementaci, která popisuje, které části
+            projektu (např. PHP skripty) implementují jednotlivé případy
+            použití. -->
+
+            Implementace systému je upravené architektury MVC za pomocí Next.js, PostgreSQL databáze a Prisma ORM. Jednotlivé případy užití jsou implementovány v "server actions" ve složce "actions/". Server actions jsou funkce, které se chovají podobně jako API endpoints a jsou volány z frontendu. Každý jednotlivý případ užití má svuj vlastní soubor, tento soubor obsahuje funkce, které jsou nějak spojeny s tímto případem užití. Například případ vytvoření uživatelského účtu je v souboru "actions/accountActions.ts" a obsahuje funkci "createAccount". Tato funkce je volána z frontendu a vytváří nový uživatelský účet v databázi.
+            
+            <h3>Příklad implementace</h3>
+            <pre>
+                <code lang="js">
+                export async function createAccount(formData: z.infer<typeof createAccountSchema>) {
+                    try {
+                        const parsedData = createAccountSchema.safeParse({
+                            email: formData.email,
+                            password: formData.password,
+                            name: formData.name,
+                            address: formData.address,
+                            city: formData.city,
+                            country: formData.country,
+                            zip: formData.zip,
+                        });
+                
+                        if (!parsedData.success) {
+                            console.error(parsedData.error);
+                            return null;
+                        }
+                        const hashedPassword = await hashPassword(formData.password);
+                        const data = await prisma.users.create({
+                            data: {
+                                email: formData.email,
+                                password: hashedPassword,
+                                name: formData.name,
+                                address: formData.address,
+                                city: formData.city,
+                                country: formData.country,
+                                zip: formData.zip,
+                            },
+                        });
+                
+                        if (data) {
+                            return 200;
+                        }
+                        return null;
+                    } catch (error) {
+                        console.error(error);
+                        return null;
+                    }
+                }
+            </code>
+        </pre>
+    
+        </p>
+
+        <h3>Databáze</h3>
+
+        Zde vložte grafické schéma relační databáze (tabulek v databázi).
+
+        <h2>Instalace</h2>
+
+        Stručně popište:
+        <ul>
+            <li>Jako první si vytvoříme klon github repositáře <a href="https://github.com/hlasensky/iis-proj.git">https://github.com/hlasensky/iis-proj.git</a>, poté přejdeme do tohoto adresáře a vložíme do něj ".env" soubor. Následně zadáme příkazy: 
+                <ul>
+                    <li><code>pnpm install</code> - tento příkaz nainstaluje všechny potřebné balíčky</li>
+                    <li><code>pnpm run dev</code> - tento příkaz spustí server na localhost:3000 určený pro development (při prvním použítí je důležíté před tímto příkazem zadat <code>pnpx prisma generate</code> pro inicializaci ORM)</li>
+                    <li><code>pnpm run build</code> - tento příkaz vytvoří produkční build aplikace</li>
+                    <li><code>pnpm run start</code> - tento příkaz spustí server na localhost:3000 určený pro produkci</li>
+                </ul>
+            
+            
+            </li>
+            <li>Požadavky na běhové prostředí
+                <ul>
+                    <li>Node.js 18.18 nebo pozdější</li>
+                    <li>PNPM</li>
+                </ul>
+            </li>
+            <li>Databáze je hostována u poskytovatele Supabase, jde zobrazit za pomoci Prismy příkazem <code>pnpx prisma studio</code></li>
+        </ul>
+
+        <h2>Známé problémy</h2>
+        <p>
+            Zde popište, které body zadání nejsou implementovány a z jakého
+            důvodu. Např. &bdquo;Z časových důvodů nebyla implementována správa
+            uživatelů.&rdquo; Pomůžete tím zrychlit hodnocení, když
+            neimplementované funkce nebudeme muset dlouze hledat.
+        </p>
+    </body>
+</html>
