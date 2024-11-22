@@ -37,7 +37,7 @@ function CalendarPresenCard({
             }}
             className={cn(
                 "bg-slate-200 my-1",
-                selected?.id === presentation.id && "border-2 border-slate-400",
+                selected?.id === presentation.id && "border-2 border-slate-300",
             )}
         >
             <CardHeader>{presentation.name}</CardHeader>
@@ -45,7 +45,7 @@ function CalendarPresenCard({
                 <Popover>
                     <PopoverTrigger>Detail</PopoverTrigger>
                     <PopoverContent>
-                        <p>{presentation.name}</p>
+                        <p className="text-xl">{presentation.name}</p>
                         <p>
                             {presentation.start?.toLocaleTimeString()} -{" "}
                             {presentation.start?.toLocaleDateString()}
@@ -56,6 +56,7 @@ function CalendarPresenCard({
                         </p>
                         <p>{presentation.creator?.name}</p>
                         <p>{presentation.room?.name}</p>
+                        <p>{presentation.room?.capacity}</p>
                     </PopoverContent>
                 </Popover>
                 {isProgram && (

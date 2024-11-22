@@ -21,18 +21,28 @@ export default async function Home() {
         return (
             <main>
                 <CartButton />
-                {conferences.map((conference, i) => {
-                    const taken = conference.orders.reduce(
-                        (acc, prev) => acc + prev.numberOfTickets,
-                        0,
-                    );
-                    const capacityObj = {
-                        takenNmOfTickets: taken,
-                        freeNmOfTickets: conference.capacity - taken,
-                        capacity: conference.capacity,
-                    };
-                    return <ConferenceCard key={i} conference={conference} capacityObj={capacityObj} />;
-                })}
+                {conferences.length ? (
+                    conferences.map((conference, i) => {
+                        const taken = conference.orders.reduce(
+                            (acc, prev) => acc + prev.numberOfTickets,
+                            0,
+                        );
+                        const capacityObj = {
+                            takenNmOfTickets: taken,
+                            freeNmOfTickets: conference.capacity - taken,
+                            capacity: conference.capacity,
+                        };
+                        return (
+                            <ConferenceCard
+                                key={i}
+                                conference={conference}
+                                capacityObj={capacityObj}
+                            />
+                        );
+                    })
+                ) : (
+                    <p>No conferences available</p>
+                )}
             </main>
         );
     } catch (error) {

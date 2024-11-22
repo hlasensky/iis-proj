@@ -35,7 +35,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
 
     return (
         <div className="flex gap-4 justify-between ">
-            <Card className="m-4">
+            <Card className="m-4 w-full">
                 <CardHeader>
                     <h1>{conference.name}</h1>
                     <CardDescription>{conference.description}</CardDescription>
