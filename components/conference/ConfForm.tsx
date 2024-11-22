@@ -20,6 +20,7 @@ import {
     createConference,
     updateConference,
 } from "@/actions/conferenceActions";
+import RoomForm from "./RoomForm";
 
 export const formConfSchema = z.object({
     name: z.string().min(2, {
@@ -32,6 +33,7 @@ export const formConfSchema = z.object({
     start: z.string(),
     end: z.string(),
     capacity: z.string(),
+    price: z.string(),
 });
 
 export function ConfForm({
@@ -43,6 +45,8 @@ export function ConfForm({
 }): JSX.Element {
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [step, setStep] = useState(true);
+    const [confID, setConfID] = useState("");
 
     const form = useForm<z.infer<typeof formConfSchema>>({
         resolver: zodResolver(formConfSchema),
@@ -53,6 +57,7 @@ export function ConfForm({
             start: defaultValues?.start || "",
             end: defaultValues?.end || "",
             capacity: defaultValues?.capacity || "",
+            price: defaultValues?.price || "",
         },
     });
 
@@ -62,15 +67,22 @@ export function ConfForm({
         console.log(values);
         try {
             let status;
+            let res = null;
             if (editID) {
                 status = await updateConference(editID, values);
             } else {
-                status = await createConference(values);
+                res = await createConference(values);
             }
 
-            if (status === 200) {
+            if (status === 200 || res?.status === 200) {
                 console.log("Form Success!");
                 setSuccess(true);
+                if (res || editID) {
+                    setConfID(res ? res.confID : editID!);
+                    setStep(false);
+                } else {
+                    setStep(true);
+                }
             } else {
                 console.log("Form Error!");
                 form.setError("name", {
@@ -89,13 +101,13 @@ export function ConfForm({
         if (success) {
             const timer = setTimeout(() => {
                 setSuccess(false);
-            }, 2000);
+            }, 1000);
 
             return () => clearTimeout(timer);
         }
     }, [success]);
 
-    return (
+    return step ? (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                 <FormField
@@ -186,6 +198,20 @@ export function ConfForm({
                         </FormItem>
                     )}
                 />
+                <FormField
+                    control={form.control}
+                    name="price"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Cena</FormLabel>
+                            <FormControl>
+                                <Input type="number" min={0} {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
                 <Button
                     type="submit"
                     className={success ? "border-green-400" : ""}
@@ -200,5 +226,15 @@ export function ConfForm({
                 </Button>
             </form>
         </Form>
+    ) : (
+        <RoomForm
+            confID={confID}
+            loading={loading}
+            setLoading={setLoading}
+            setStep={setStep}
+            editID={editID}
+            setSuccess={setSuccess}
+            success={success}
+        />
     );
 }

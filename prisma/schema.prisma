@@ -65,10 +65,10 @@ model users {
   role          Roles          @default(USER)
   conference    Conference[]
   Presentation  Presentation[]
+  program       Program?
   accounts      accounts[]
   sessions      sessions[]
   Order         Order[]        @relation("OrderTousers")
-  program       Program?        
 
   @@schema("next_auth")
 }
@@ -105,16 +105,17 @@ model Presentation {
   conference   Conference @relation(fields: [conferenceId], references: [id], onDelete: Cascade)
   creator      users      @relation(fields: [creatorId], references: [id])
   room         Room?      @relation(fields: [roomId], references: [id], onDelete: Cascade)
-  program      Program[]
+  program      Program[]  @relation("PresentationToProgram")
 
   @@schema("next_auth")
 }
 
 model Program {
   id            String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
-  presentations Presentation[]
-  userId        String         @db.Uuid @unique
+  userId        String         @unique @db.Uuid
   user          users          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  presentations Presentation[] @relation("PresentationToProgram")
+
   @@schema("next_auth")
 }
 
@@ -122,9 +123,9 @@ model Room {
   id            String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
   name          String
   capacity      Int
-  conferenceId  String?        @db.Uuid
+  conferenceId  String         @db.Uuid
   presentations Presentation[]
-  Conference    Conference?    @relation(fields: [conferenceId], references: [id], onDelete: Cascade)
+  Conference    Conference     @relation(fields: [conferenceId], references: [id], onDelete: Cascade)
 
   @@schema("next_auth")
 }

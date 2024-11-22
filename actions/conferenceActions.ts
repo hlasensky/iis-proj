@@ -114,14 +114,15 @@ export async function createConference(values: z.infer<typeof formConfSchema>) {
         data: {
             name: values.name,
             description: values.desc,
-            capacity: Number(values.capacity),
+            capacity: Math.max(Number(values.capacity), 1),
             startTime: tmpStart,
             endTime: tmpEnd,
             creatorId: user.id,
+            price: Math.max(Number(values.price), 0),
         },
     });
 
-    if (conference) return 200;
+    if (conference) return { status: 200, confID: conference.id };
     return null;
 }
 
@@ -145,6 +146,7 @@ export async function updateConference(
             capacity: Number(values.capacity),
             startTime: tmpStart,
             endTime: tmpEnd,
+            price: Math.max(Number(values.price), 0),
         },
     });
 

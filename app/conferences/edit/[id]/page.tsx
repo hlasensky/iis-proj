@@ -57,6 +57,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                 </TabsList>
                 <TabsContent value="editConf" className="w-full">
                     <ConfForm
+                        editID={conference.id}
                         defaultValues={{
                             name: conference.name,
                             desc: conference.description,
@@ -68,6 +69,9 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                                 .slice(11, 16),
                             end: conference.endTime.toISOString().slice(11, 16),
                             capacity: conference.capacity.toString(),
+                            price: conference.price
+                                ? conference.price.toString()
+                                : "1",
                         }}
                     />
                 </TabsContent>

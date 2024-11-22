@@ -104,7 +104,11 @@ const ChangeStatusCell = (data: CellContext<CellProps, unknown>) => {
             <SelectTrigger id="evaluated">
                 <SelectValue
                     placeholder={
-                        data.row.original.evaluated ? "Allowed" : "Disallowed"
+                        data.row.original.evaluated === null
+                            ? "Evaluate"
+                            : data.row.original.evaluated
+                            ? "Allowed"
+                            : "Disallowed"
                     }
                 />
             </SelectTrigger>
@@ -203,9 +207,7 @@ const AddStartTimeCell = (data: CellContext<CellProps, unknown>) => {
     return (
         <Popover>
             <PopoverTrigger>
-                {startT
-                    ? startT
-                    : "Select start time"}
+                {startT ? startT : "Select start time"}
             </PopoverTrigger>
             <PopoverContent>
                 <Input
@@ -300,6 +302,7 @@ const AddRoomCell = (data: CellContext<CellProps, unknown>) => {
     useEffect(() => {
         const fetchPress = async () => {
             const roomsFetched = await getRooms(data.row.original.conferenceId);
+            console.log(roomsFetched);
             if (roomsFetched) setRooms(roomsFetched);
         };
         fetchPress();
