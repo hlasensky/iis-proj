@@ -55,7 +55,6 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                 presentations={presentations}
                 conferenceStart={conference.startTime}
                 conferenceEnd={conference.endTime}
-                isProgram={false}
             />
         </div>
     );

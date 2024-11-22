@@ -40,6 +40,7 @@ async function ConferenceCard({
             </CardContent>
             <CardFooter className="flex justify-between text-slate-400">
                 <p>{`${dateStart.toLocaleString()} - ${dateEnd.toLocaleString()}`}</p>
+
                 <p>
                     Kapacita:{" "}
                     {`${capacityObj.takenNmOfTickets}/${capacityObj?.capacity}`}

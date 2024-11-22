@@ -21,6 +21,9 @@ import {
     updateConference,
 } from "@/actions/conferenceActions";
 import RoomForm from "./RoomForm";
+import { useAtom } from "jotai";
+import { openPopupAtom } from "@/app/userAtom";
+import { toast } from "sonner";
 
 export const formConfSchema = z.object({
     name: z.string().min(2, {
@@ -60,8 +63,7 @@ export function ConfForm({
             price: defaultValues?.price || "",
         },
     });
-
-    // 2. Define a submit handler.
+    const [, setOpenPopup] = useAtom(openPopupAtom);
     async function onSubmit(values: z.infer<typeof formConfSchema>) {
         setLoading(true);
         console.log(values);

@@ -34,7 +34,12 @@ function CreatePresButton({
                     <DialogTitle>Vytvor Prezentaci</DialogTitle>
                     <DialogDescription></DialogDescription>
                 </DialogHeader>
-                <PresForm edit={false} conf={conf} Cname={name} />
+                <PresForm
+                    edit={false}
+                    conf={conf}
+                    Cname={name}
+                    setOpenEdit={setOpenPopup}
+                />
             </DialogContent>
         </Dialog>
     );

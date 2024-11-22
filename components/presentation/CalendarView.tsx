@@ -33,7 +33,7 @@ function CalendarView({
     })[];
     conferenceStart: Date;
     conferenceEnd: Date;
-    isProgram: boolean;
+    isProgram?: Boolean;
 }) {
     const calculate5MinuteIntervals = (date: Date) =>
         Math.round((date.getMinutes() + date.getHours() * 60) / 5);

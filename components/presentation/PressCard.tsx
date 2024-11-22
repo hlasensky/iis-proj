@@ -38,7 +38,8 @@ export default function PressCard({ presentation }: PressCardProps) {
                         ? "Prezentace byla schválena"
                         : "Prezentace nebyla schválena"}
                 </p>
-                {presentation.evaluated === null && (
+                {(presentation.evaluated === null ||
+                    presentation.evaluated === false) && (
                     <div className="flex space-x-10">
                         <Button
                             onClick={() => {
@@ -63,7 +64,11 @@ export default function PressCard({ presentation }: PressCardProps) {
                 )}
                 {openEdit && (
                     <div>
-                        <PresForm edit={true} pres={presentation} />
+                        <PresForm
+                            edit={true}
+                            pres={presentation}
+                            setOpenEdit={setOpenEdit}
+                        />
                     </div>
                 )}
             </CardContent>

@@ -8,7 +8,6 @@ import { Loader2, Minus, Plus, Trash } from "lucide-react";
 import { Input } from "../ui/input";
 import Link from "next/link";
 import { getCapacity } from "@/actions/conferenceActions";
-import CreatePresButton from "../presentation/CreatePresButton";
 
 function ConferencesButtons({ id, name }: { id: string; name: string }) {
     const [cart, setCart] = useAtom(cartAtom);
@@ -102,7 +101,6 @@ function ConferencesButtons({ id, name }: { id: string; name: string }) {
                     Add to cart
                 </Button>
             )}
-            <CreatePresButton classNameTrig="" conf={id} name={name} />
         </div>
     );
 }

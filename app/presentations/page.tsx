@@ -9,6 +9,9 @@ import { Presentation } from "@prisma/client";
 import { authOptions } from "@/utils/authOptions";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group";
+import { Bold } from "lucide-react";
+import UserProgram from "@/components/presentation/UserProgram";
 
 async function Presantations() {
     const session = await getServerSession(authOptions);
@@ -32,18 +35,13 @@ async function Presantations() {
             presentationsMap[conference.conference.id] = presentations;
             const userProgram = await GetMyProgram(conference.conference.id);
             if (userProgram) {
-                const key = conference.conference.startTime.toLocaleDateString();
+                const key =
+                    conference.conference.startTime.toLocaleDateString();
                 if (!userProgramMap[key]) {
-                    userProgramMap[
-                        key
-                    ] = userProgram.presentations;
+                    userProgramMap[key] = userProgram.presentations;
                 } else {
-                    userProgramMap[
-                        key
-                    ] = [
-                        ...userProgramMap[
-                            key
-                        ],
+                    userProgramMap[key] = [
+                        ...userProgramMap[key],
                         ...userProgram.presentations,
                     ];
                 }
@@ -83,20 +81,7 @@ async function Presantations() {
                             ))}
                         </TabsList>
                         <TabsContent value="myProgram" className="w-full">
-                            {myProgram ? (
-                                <CalendarView
-                                    conferenceStart={
-                                        new Date("2024-12-15T17:00:00Z")
-                                    }
-                                    conferenceEnd={
-                                        new Date("2024-12-15T17:00:00Z")
-                                    }
-                                    presentations={myProgram.presentations}
-                                    isProgram={true}
-                                />
-                            ) : (
-                                <p>no presentations</p>
-                            )}
+                            <UserProgram userProgramMap={userProgramMap} />
                         </TabsContent>
                         {conferences.map((conference, i) => {
                             const conferencePresentations =

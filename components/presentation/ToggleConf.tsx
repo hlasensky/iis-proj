@@ -16,7 +16,6 @@ function ToggleConf({
         creator?: {
             name: string | null;
         };
-
     };
     const [presentations, setPresentations] = useState<presType[]>([]);
 
@@ -97,7 +96,6 @@ function ToggleConf({
                         presentations={presentations}
                         conferenceStart={selectedConference.startTime}
                         conferenceEnd={selectedConference.endTime}
-                        isProgram={false}
                     />
                 </div>
             )}

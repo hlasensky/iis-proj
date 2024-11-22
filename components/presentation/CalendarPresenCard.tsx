@@ -7,7 +7,10 @@ import { cn } from "@/lib/utils";
 import { Popover, PopoverContent } from "../ui/popover";
 import { PopoverTrigger } from "@radix-ui/react-popover";
 import { Button } from "../ui/button";
-import { addToMyProgram } from "@/actions/presentationActions";
+import {
+    addToMyProgram,
+    removeFromMyProgram,
+} from "@/actions/presentationActions";
 import { toast } from "sonner";
 
 function CalendarPresenCard({
@@ -24,7 +27,7 @@ function CalendarPresenCard({
     };
     rowStart: number;
     rowSpan: number;
-    isProgram: boolean;
+    isProgram?: Boolean;
 }) {
     const [selected, setSelected] = useAtom(selectedPresentationAtom);
 
@@ -59,18 +62,33 @@ function CalendarPresenCard({
                         <p>{presentation.room?.capacity}</p>
                     </PopoverContent>
                 </Popover>
-                {isProgram && (
+                {isProgram !== undefined && (
                     <Button
                         onClick={async () => {
-                            const res = await addToMyProgram(presentation);
-                            if (res === 200) {
-                                toast.success("succesfully added");
+                            if (isProgram) {
+                                // Handle adding to the program
+                                const res = await addToMyProgram(presentation);
+                                if (res === 200) {
+                                    toast.success("Successfully added");
+                                } else {
+                                    toast.error("Failed to add");
+                                }
                             } else {
-                                toast.error("failed to add");
+                                // Handle removing from the program
+                                const res = await removeFromMyProgram(
+                                    presentation,
+                                );
+                                if (res === 200) {
+                                    toast.success("Successfully removed");
+                                } else {
+                                    toast.error("Failed to remove");
+                                }
                             }
                         }}
                     >
-                        Add to my program
+                        {isProgram
+                            ? "Add to my program"
+                            : "Remove from my program"}
                     </Button>
                 )}
             </CardContent>

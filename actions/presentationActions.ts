@@ -215,6 +215,7 @@ export async function editPresentation(
             name: values.name,
             description: values.desc,
             content: values.content,
+            evaluated: null,
         },
     });
 
@@ -285,6 +286,35 @@ export async function addToMyProgram(pres: Presentation) {
                 userId: user.id,
                 presentations: {
                     connect: {
+                        id: pres.id,
+                    },
+                },
+            },
+        });
+        if (updateProgram) return 200;
+        return null;
+    }
+}
+export async function removeFromMyProgram(pres: Presentation) {
+    const user = await getSessionUser();
+    if (!user) {
+        return null;
+    }
+
+    const program = await prisma.program.findUnique({
+        where: {
+            userId: user.id,
+        },
+    });
+
+    if (program) {
+        const updateProgram = await prisma.program.update({
+            where: {
+                userId: user.id,
+            },
+            data: {
+                presentations: {
+                    disconnect: {
                         id: pres.id,
                     },
                 },

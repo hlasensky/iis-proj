@@ -36,7 +36,7 @@ import {
     editPresentation,
 } from "@/actions/presentationActions";
 import { useAtom } from "jotai";
-import { openPopupAtom } from "@/app/userAtom";
+import { openEditAtom, openPopupAtom } from "@/app/userAtom";
 import { Presentation } from "@prisma/client";
 
 export const formPresSchema = z.object({
@@ -64,15 +64,28 @@ type PresFormProps = {
     pres?: Presentation;
     conf?: string;
     Cname?: string;
+    setOpenEdit: (openEdit: boolean) => void;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function PresForm({ edit, pres, conf, Cname }: PresFormProps) {
+export function PresForm({
+    edit,
+    pres,
+    conf,
+    Cname,
+    setOpenEdit,
+}: PresFormProps) {
     const schema = edit ? formPresEditSchema : formPresSchema;
 
     const form = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
+        defaultValues: {
+            name: pres?.name || "",
+            desc: pres?.description || "",
+            content: pres?.content || "",
+        },
     });
+
     const [conferences, setConferences] = useState<
         { id: string; name: string }[]
     >([]);
@@ -99,7 +112,6 @@ export function PresForm({ edit, pres, conf, Cname }: PresFormProps) {
         values: z.infer<typeof formPresSchema | typeof formPresEditSchema>,
     ) {
         setLoading(true);
-        console.log(values);
         try {
             let status;
             if (edit && pres) {
@@ -121,6 +133,7 @@ export function PresForm({ edit, pres, conf, Cname }: PresFormProps) {
                 console.log("Form Success!");
                 form.reset();
                 setOpenPopup(false);
+                setOpenEdit(false);
                 // window.location.reload();
                 toast.success("prezentace uspesne vytvorena");
             } else {
