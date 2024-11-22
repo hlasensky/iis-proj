@@ -36,7 +36,7 @@ import {
     editPresentation,
 } from "@/actions/presentationActions";
 import { useAtom } from "jotai";
-import { openEditAtom, openPopupAtom } from "@/app/userAtom";
+import {  openPopupAtom } from "@/app/userAtom";
 import { Presentation } from "@prisma/client";
 
 export const formPresSchema = z.object({
@@ -67,10 +67,10 @@ type PresFormProps = {
     setOpenEdit: (openEdit: boolean) => void;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function PresForm({
     edit,
     pres,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     conf,
     Cname,
     setOpenEdit,

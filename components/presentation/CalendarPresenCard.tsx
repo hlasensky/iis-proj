@@ -27,7 +27,7 @@ function CalendarPresenCard({
     };
     rowStart: number;
     rowSpan: number;
-    isProgram?: Boolean;
+    isProgram?: boolean;
 }) {
     const [selected, setSelected] = useAtom(selectedPresentationAtom);
 

@@ -7,14 +7,6 @@ const config: Config = {
         "./components/**/*.{js,ts,jsx,tsx,mdx}",
         "./app/**/*.{js,ts,jsx,tsx,mdx}",
     ],
-    safelist: [
-        {
-            pattern: /row-start-\[.*\]/,
-        },
-        {
-            pattern: /row-span-\[.*\]/,
-        },
-    ],
     theme: {
         extend: {
             colors: {

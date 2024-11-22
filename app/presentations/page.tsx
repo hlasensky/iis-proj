@@ -9,8 +9,6 @@ import { Presentation } from "@prisma/client";
 import { authOptions } from "@/utils/authOptions";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group";
-import { Bold } from "lucide-react";
 import UserProgram from "@/components/presentation/UserProgram";
 
 async function Presantations() {
