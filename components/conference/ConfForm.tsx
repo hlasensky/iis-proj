@@ -62,7 +62,6 @@ export function ConfForm({
     });
     async function onSubmit(values: z.infer<typeof formConfSchema>) {
         setLoading(true);
-        console.log(values);
         try {
             let status;
             let res = null;

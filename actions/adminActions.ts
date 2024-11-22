@@ -72,7 +72,6 @@ export async function changePayStatus(orderId: string, status: boolean): Promise
 		return null;
 	}
 
-	console.log(orderId, status);
 
 	const data = await prisma.order.update({
 		where: {

@@ -20,7 +20,8 @@ function ConferencesButtons({ id, name }: { id: string; name: string }) {
             setFreeCapacity(capacity ? capacity?.freeNmOfTickets : null);
         };
         fetchFreeCapacity();
-    }, [id]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <div className="flex gap-2 flex-wrap">

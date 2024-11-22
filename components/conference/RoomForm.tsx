@@ -58,7 +58,6 @@ function RoomForm({
     const [editRooms, setEditRooms] = React.useState<Item[]>([]);
 
     useEffect(() => {
-        console.log("editID", editID);
         if (editID) {
             const fetchRooms = async () => {
                 const res = await getRooms(editID);
@@ -66,7 +65,6 @@ function RoomForm({
                 if (!res || res.length === 0) {
                     console.error("Error fetching rooms or no rooms found");
                 } else {
-                    console.log(res);
                     setEditRooms(
                         res.map((room) => ({
                             ...room,
@@ -108,11 +106,6 @@ function RoomForm({
 
     async function onRoomSubmit(values: z.infer<typeof formRoomSchema>) {
         console.log("submitting form");
-
-        console.log("values", values);
-        console.log("newRooms", newRooms);
-        console.log("editRooms", editRooms);
-
         const valuesArray = Object.values(values);
         const dataArray = [...editRooms, ...newRooms];
 
@@ -287,7 +280,6 @@ function RoomForm({
                 <Button
                     type="submit"
                     className={success ? "border-green-400" : ""}
-                    onClick={() => console.log("submit")}
                 >
                     {loading ? (
                         <Loader2 className="animate-spin" />

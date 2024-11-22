@@ -153,7 +153,6 @@ export function PresForm({
     if (loading) {
         return <div>Loading...</div>; // Loading state can be more stylized
     }
-    console.log(Cname);
 
     return (
         <Form {...form}>

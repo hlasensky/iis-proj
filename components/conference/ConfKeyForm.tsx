@@ -39,7 +39,6 @@ export function ConfKeyForm(): JSX.Element {
     // 2. Define a submit handler.
     async function onSubmit(values: z.infer<typeof formKeySchema>) {
         setLoading(true);
-        console.log(values);
         try {
             const status = await addVisitorByKey(values);
             if (status === 200) {

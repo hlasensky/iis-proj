@@ -8,12 +8,16 @@ import { toast } from "sonner";
 import { Button } from "../ui/button";
 import { useAtom } from "jotai";
 import { cartAtom } from "@/app/userAtom";
+import { Loader2 } from "lucide-react";
 
 function OrderButton() {
     const [cart, setCart] = useAtom(cartAtom);
+    const [loading, setLoading] = React.useState(false);
     return (
         <Button
             onClick={async () => {
+                if (loading) return;
+                setLoading(true);
                 const user = await getSessionUser();
                 if (!user) {
                     signIn();
@@ -35,7 +39,7 @@ function OrderButton() {
                 }
             }}
         >
-            Order
+            {loading ? <Loader2 className="animate-spin" /> : "Order"}
         </Button>
     );
 }

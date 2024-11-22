@@ -70,6 +70,7 @@ export function RegisterForm(): JSX.Element {
 				console.log("Register Success!");
 				setSuccess(true);
 				form.reset();
+				
 				signIn("credentials", {
 					email: values.email,
 					password: values.password,

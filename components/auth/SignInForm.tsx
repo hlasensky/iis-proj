@@ -16,7 +16,8 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
-import type { JSX } from "react";
+import { useState, type JSX } from "react";
+import { Loader2 } from "lucide-react";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -25,6 +26,7 @@ const formSchema = z.object({
 
 export function SignInForm({ csrfToken }: { csrfToken: string }): JSX.Element {
     const router = useRouter();
+    const [loading, setLoading] = useState(false);
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -35,7 +37,9 @@ export function SignInForm({ csrfToken }: { csrfToken: string }): JSX.Element {
     });
 
     const onSubmit = async (data: z.infer<typeof formSchema>) => {
-        console.log(data);
+        if (loading) return;
+        setLoading(true);
+
         const status = await signIn("credentials", {
             email: data.email,
             password: data.password,
@@ -92,15 +96,23 @@ export function SignInForm({ csrfToken }: { csrfToken: string }): JSX.Element {
                         </Button>
                     </div>
                     <div className="h-[2px] bg-slate-300 rounded relative">
-                        <span className="absolute ml-5 px-1 -top-[0.875rem] text-slate-500 bg-white rounded">or</span>
+                        <span className="absolute ml-5 px-1 -top-[0.875rem] text-slate-500 bg-white rounded">
+                            or
+                        </span>
                     </div>
                     <Button
                         variant={"secondary"}
                         type="button"
                         className="mx-auto"
-                        onClick={() => router.push("/auth/register")}
+                        onClick={() =>
+                            !loading ? router.push("/auth/register") : null
+                        }
                     >
-                        Register
+                        {loading ? (
+                            <Loader2 className="animate-spin" />
+                        ) : (
+                            "Register"
+                        )}
                     </Button>
                 </form>
             </Form>

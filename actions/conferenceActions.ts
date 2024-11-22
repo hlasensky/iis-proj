@@ -82,7 +82,6 @@ export async function getConferences(id?: string) {
 
 export async function getUserConferences() {
     const user = await getSessionUser();
-    console.log(user);
     if (!user) {
         return [];
     }

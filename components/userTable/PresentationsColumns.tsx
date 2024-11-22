@@ -302,7 +302,6 @@ const AddRoomCell = (data: CellContext<CellProps, unknown>) => {
     useEffect(() => {
         const fetchPress = async () => {
             const roomsFetched = await getRooms(data.row.original.conferenceId);
-            console.log(roomsFetched);
             if (roomsFetched) setRooms(roomsFetched);
         };
         fetchPress();

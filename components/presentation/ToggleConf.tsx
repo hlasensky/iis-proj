@@ -44,7 +44,6 @@ function ToggleConf({
         fetchPresentations();
     }, [selectedConference]);
 
-    console.log(userOrders);
     return (
         <>
             <ToggleGroup type="single">
