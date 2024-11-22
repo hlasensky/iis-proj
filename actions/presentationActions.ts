@@ -229,7 +229,7 @@ export async function addToMyProgram(pres: Presentation) {
         return null;
     }
 
-    const program = await prisma.program.findUnique({
+    let program = await prisma.program.findUnique({
         where: {
             userId: user.id,
         },
@@ -245,6 +245,28 @@ export async function addToMyProgram(pres: Presentation) {
         },
     });
 
+    if (!program) {
+        await prisma.program.create({
+            data: {
+                userId: user.id,
+            },
+        });
+        program = await prisma.program.findUnique({
+            where: {
+                userId: user.id,
+            },
+            include: {
+                presentations: {
+                    where: {
+                        id: pres.id,
+                    },
+                    include: {
+                        room: true,
+                    },
+                },
+            },
+        });
+    }
     const numberOfAttendees = await prisma.program.count({
         where: {
             presentations: {
@@ -255,7 +277,9 @@ export async function addToMyProgram(pres: Presentation) {
         },
     });
 
-    if (!program?.presentations || program.presentations[0].room === null) {
+    console.log(program, numberOfAttendees);
+
+    if (!program?.presentations[0] || program.presentations[0].room === null) {
         console.error("Invalid program or missing room");
         return null;
     }
@@ -265,35 +289,20 @@ export async function addToMyProgram(pres: Presentation) {
         return null;
     }
 
-    if (program) {
-        const updateProgram = await prisma.program.update({
-            where: {
-                userId: user.id,
-            },
-            data: {
-                presentations: {
-                    connect: {
-                        id: pres.id,
-                    },
+    const updateProgram = await prisma.program.update({
+        where: {
+            userId: user.id,
+        },
+        data: {
+            presentations: {
+                connect: {
+                    id: pres.id,
                 },
             },
-        });
-        if (updateProgram) return 200;
-        return null;
-    } else {
-        const updateProgram = await prisma.program.create({
-            data: {
-                userId: user.id,
-                presentations: {
-                    connect: {
-                        id: pres.id,
-                    },
-                },
-            },
-        });
-        if (updateProgram) return 200;
-        return null;
-    }
+        },
+    });
+    if (updateProgram) return 200;
+    return null;
 }
 export async function removeFromMyProgram(pres: Presentation) {
     const user = await getSessionUser();
