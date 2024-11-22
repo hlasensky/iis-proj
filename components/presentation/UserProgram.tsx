@@ -5,6 +5,8 @@ import { ToggleGroup, ToggleGroupItem } from "@radix-ui/react-toggle-group";
 import React, { useEffect, useState } from "react";
 import CalendarView from "./CalendarView";
 import { Loader2 } from "lucide-react";
+import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
 
 type UserMapType = Record<string, Presentation[]>;
 
@@ -32,7 +34,16 @@ function UserProgram({ userProgramMap }: { userProgramMap: UserMapType }) {
             >
                 {Object.keys(userProgramMap).map((date) => (
                     <ToggleGroupItem value={date} aria-label={date} key={date}>
-                        <p>{date}</p>
+                        <p
+                            className={cn(
+                                "m-2 bg-white p-2 border border-black rounded-md text-black text-sm",
+                                date === selectedDay
+                                    ? "bg-black text-white"
+                                    : "",
+                            )}
+                        >
+                            {date}
+                        </p>
                     </ToggleGroupItem>
                 ))}
             </ToggleGroup>

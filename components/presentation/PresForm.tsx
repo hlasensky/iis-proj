@@ -163,7 +163,7 @@ export function PresForm({
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Název Prezentace</FormLabel>
+                            <FormLabel>Name</FormLabel>
                             <FormControl>
                                 <Input {...field} />
                             </FormControl>
@@ -176,7 +176,7 @@ export function PresForm({
                     name="desc"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Popis Prezentace</FormLabel>
+                            <FormLabel>Description</FormLabel>
                             <FormControl>
                                 <Input {...field} />
                             </FormControl>
@@ -189,7 +189,7 @@ export function PresForm({
                     name="content"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Obsah Prezentace</FormLabel>
+                            <FormLabel>Content</FormLabel>
                             <FormControl>
                                 <Input {...field} />
                             </FormControl>
@@ -282,7 +282,7 @@ export function PresForm({
                         )}
                     />
                 )}
-                <Button type="submit">{edit ? "Upravit" : "Vytvořit"}</Button>
+                <Button type="submit">{edit ? "Edit" : "Create"}</Button>
             </form>
         </Form>
     );

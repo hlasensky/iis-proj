@@ -40,7 +40,7 @@ function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
                         active
                             ? "border-2 border-blue-400 text-blue-400"
                             : "border-2 border-slate-300 ",
-                        label === "Registrace" || label === "Účet"
+                        label === "Sign up" || label === "Account"
                             ? "mt-auto"
                             : "",
 
@@ -90,22 +90,24 @@ export function NavbarMinimal({
 
     const mockdata = [
         { icon: HomeIcon, label: "Home", url: "/" },
-        { icon: LayoutDashboard, label: "Konference", url: "/conferences" },
+        { icon: LayoutDashboard, label: "Conferences", url: "/conferences" },
         {
             icon: AlignEndVerticalIcon,
-            label: "Prezentace",
+            label: "Presentations",
             url: "/presentations",
         },
-        ...(user.admin ? [{ icon: Settings, label: "Admin", url: "/admin" }] : []),
+        ...(user.admin
+            ? [{ icon: Settings, label: "Admin", url: "/admin" }]
+            : []),
         ...(session
-            ? [{ icon: AccBtn, label: "Účet", url: "/account" }]
+            ? [{ icon: AccBtn, label: "Account", url: "/account" }]
             : [
                   {
                       icon: () => RegBtn({ session: session }),
-                      label: "Registrace",
+                      label: "Sign up",
                       url: "/auth/register",
                   },
-                  { icon: LogInBtn, label: "Přihlášení", url: "" },
+                  { icon: LogInBtn, label: "Sign in", url: "" },
               ]),
     ];
 

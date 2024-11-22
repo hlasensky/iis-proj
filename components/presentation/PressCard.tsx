@@ -33,10 +33,10 @@ export default function PressCard({ presentation }: PressCardProps) {
             <CardContent>
                 <p>
                     {presentation.evaluated === null
-                        ? "Prezentace čeká na schválení"
+                        ? "Pending"
                         : presentation.evaluated === true
-                        ? "Prezentace byla schválena"
-                        : "Prezentace nebyla schválena"}
+                        ? "Accepted"
+                        : "Rejected"}
                 </p>
                 {(presentation.evaluated === null ||
                     presentation.evaluated === false) && (
@@ -51,14 +51,12 @@ export default function PressCard({ presentation }: PressCardProps) {
                             }}
                         >
                             <p>
-                                {openEdit
-                                    ? "Zavřít úpravu"
-                                    : "Upravit prezentaci"}
+                                {openEdit ? "Close edit" : "Edit presentation"}
                             </p>
                         </Button>
 
                         <Button onClick={handleDelete}>
-                            Smazat prezentaci
+                            Delete presentation
                         </Button>
                     </div>
                 )}

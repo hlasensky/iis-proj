@@ -42,7 +42,7 @@ async function ConferenceCard({
                 <p>{`${dateStart.toLocaleString()} - ${dateEnd.toLocaleString()}`}</p>
 
                 <p>
-                    Kapacita:{" "}
+                    Capacity:{" "}
                     {`${capacityObj.takenNmOfTickets}/${capacityObj?.capacity}`}
                 </p>
             </CardFooter>

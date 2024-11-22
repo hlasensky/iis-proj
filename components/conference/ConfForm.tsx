@@ -113,7 +113,7 @@ export function ConfForm({
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Název Konference</FormLabel>
+                            <FormLabel>Name</FormLabel>
                             <FormControl>
                                 <Input {...field} />
                             </FormControl>
@@ -126,7 +126,7 @@ export function ConfForm({
                     name="desc"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Popis</FormLabel>
+                            <FormLabel>Description</FormLabel>
                             <FormControl>
                                 <Input {...field} />
                             </FormControl>
@@ -139,7 +139,7 @@ export function ConfForm({
                     name="capacity"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Kapacita</FormLabel>
+                            <FormLabel>Capacity</FormLabel>
                             <FormControl>
                                 <Input type="number" min={1} {...field} />
                             </FormControl>
@@ -152,7 +152,7 @@ export function ConfForm({
                     name="day"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Den</FormLabel>
+                            <FormLabel>Day</FormLabel>
                             <FormControl>
                                 <Input type="date" {...field} />
                             </FormControl>
@@ -165,7 +165,7 @@ export function ConfForm({
                     name="start"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Pocatek</FormLabel>
+                            <FormLabel>Start</FormLabel>
                             <FormControl>
                                 <Input
                                     type="time"
@@ -183,7 +183,7 @@ export function ConfForm({
                     name="end"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>konec</FormLabel>
+                            <FormLabel>End</FormLabel>
                             <FormControl>
                                 <Input
                                     type="time"
@@ -201,7 +201,7 @@ export function ConfForm({
                     name="price"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Cena</FormLabel>
+                            <FormLabel>Price</FormLabel>
                             <FormControl>
                                 <Input type="number" min={0} {...field} />
                             </FormControl>

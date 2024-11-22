@@ -59,7 +59,7 @@ async function Presantations() {
                         Program
                     </TabsTrigger>
                     <TabsTrigger value="vytvorene" className="w-full">
-                        Vytvorene
+                        Created
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="zakoupene" className="w-full">

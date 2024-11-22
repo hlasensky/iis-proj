@@ -352,34 +352,34 @@ export const presentationsColumns: ColumnDef<CellProps>[] = [
     },
     {
         accessorKey: "conference.name",
-        header: "Konference",
+        header: "Conference",
     },
     {
         accessorKey: "description",
-        header: "Popis",
+        header: "Description",
     },
     {
         accessorKey: "content",
-        header: "Obsah",
+        header: "Content",
     },
     {
         accessorKey: "room",
-        header: "Místnost",
+        header: "Room",
         cell: AddRoomCell,
     },
     {
         accessorKey: "start",
-        header: "Začátek",
+        header: "Start",
         cell: AddStartTimeCell,
     },
     {
         accessorKey: "end",
-        header: "Konec",
+        header: "End",
         cell: AddEndTimeCell,
     },
     {
         accessorKey: "paymentStatus",
-        header: "Stav platby",
+        header: "Payment status",
         cell: ChangeStatusCell,
     },
     {

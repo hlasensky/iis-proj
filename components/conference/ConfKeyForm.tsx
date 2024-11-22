@@ -86,7 +86,7 @@ export function ConfKeyForm(): JSX.Element {
                             <FormControl>
                                 <Input
                                     className="w-full"
-                                    placeholder="Zadej klic k odemknuti konference"
+                                    placeholder="Enter key to unlock conference"
                                     {...field}
                                 />
                             </FormControl>
@@ -104,7 +104,7 @@ export function ConfKeyForm(): JSX.Element {
                     ) : success ? (
                         <Check />
                     ) : (
-                        "Pouzit klic"
+                        "Use key"
                     )}
                 </Button>
             </form>

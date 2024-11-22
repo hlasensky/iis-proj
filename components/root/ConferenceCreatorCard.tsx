@@ -32,7 +32,7 @@ export default function ConferenceCreatorCard({
                             <Button className="mt-4">Edit</Button>
                         </Link>
                         <Button onClick={handleDelete} className="mt-4">
-                            Smazat konferenci
+                            Delete conference
                         </Button>
                     </div>
                 </div>

@@ -31,10 +31,10 @@ async function Conferences() {
             <Tabs defaultValue="zakoupene" className="mx-12 my-5">
                 <TabsList className="w-full">
                     <TabsTrigger value="zakoupene" className="w-full">
-                        Zakoupene
+                        Purchased
                     </TabsTrigger>
                     <TabsTrigger value="vytvorene" className="w-full">
-                        Vytvorene
+                        Created
                     </TabsTrigger>
                 </TabsList>
                 <TabsContent value="zakoupene" className="w-full">

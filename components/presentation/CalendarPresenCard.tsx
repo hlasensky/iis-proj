@@ -86,9 +86,7 @@ function CalendarPresenCard({
                             }
                         }}
                     >
-                        {isProgram
-                            ? "Add to my program"
-                            : "Remove from my program"}
+                        {isProgram ? "Add to my program" : "Remove"}
                     </Button>
                 )}
             </CardContent>

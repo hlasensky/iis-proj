@@ -25,7 +25,7 @@ function CreateConfButton({ classNameTrig }: { classNameTrig: string }) {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Vytvor konference</DialogTitle>
+                    <DialogTitle>Create conference</DialogTitle>
                     <DialogDescription></DialogDescription>
                 </DialogHeader>
                 <ConfForm />

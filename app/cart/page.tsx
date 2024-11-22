@@ -18,7 +18,7 @@ async function Page() {
     return (
         <Card className="w-3/4 mx-auto my-6">
             <CardHeader className="text-3xl font-semibold">
-                <h1>Košík</h1>
+                <h1>Cart</h1>
             </CardHeader>
             <CardContent>
                 <hr className="my-4"></hr>

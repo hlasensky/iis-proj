@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { getSessionUser } from "@/actions/actions";
 import { processOrder } from "@/actions/cartAction";
@@ -28,14 +28,14 @@ function OrderButton() {
                     })),
                 );
                 if (res.some((item) => item.status === 500))
-                    toast.error("Objednávka se nezdařila");
+                    toast.error("Order unsuccesful");
                 else {
-                    toast.success("Objednávka úspěšně odeslána");
+                    toast.success("Order succesful");
                     setCart([]);
                 }
             }}
         >
-            Objednat
+            Order
         </Button>
     );
 }
