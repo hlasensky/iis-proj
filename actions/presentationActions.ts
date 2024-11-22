@@ -134,7 +134,62 @@ export async function addRoomToPresentation(
     presentationId: string,
     roomId: string,
 ) {
-    const presentation = await prisma.presentation.update({
+    const conference = await prisma.conference.findFirst({
+        where: {
+            presentations: {
+                some: {
+                    id: presentationId,
+                },
+            },
+        },
+    });
+
+    if (!conference) {
+        console.error("Invalid conference");
+        return null;
+    }
+
+    const allPresentations = await prisma.presentation.findMany({
+        where: {
+            conferenceId: conference.id,
+            roomId: roomId,
+        },
+    });
+
+    const presentation = await prisma.presentation.findUnique({
+        where: {
+            id: presentationId,
+        },
+    });
+
+    if (
+        !presentation ||
+        presentation.start === null ||
+        presentation.end === null
+    ) {
+        console.error("Invalid presentation or missing start/end time");
+        return null;
+    }
+
+    const occupied = allPresentations.some((pres) => {
+        if (pres.start === null || pres.end === null) return false;
+
+        if (new Date(pres.start) < new Date(presentation.start!)) {
+            if (new Date(pres.end) > new Date(presentation.start!)) {
+                return true;
+            }
+        } else if (new Date(pres.start) < new Date(presentation.end!)) {
+            return true;
+        }
+        return false;
+    });
+
+    if (occupied) {
+        console.error("Room is occupied");
+        return null;
+    }
+
+    const presentationUpdate = await prisma.presentation.update({
         where: {
             id: presentationId,
         },
@@ -143,7 +198,8 @@ export async function addRoomToPresentation(
         },
     });
 
-    if (presentation) return 200;
+    if (presentationUpdate) return 200;
+    console.error("Failed to add room to presentation");
     return null;
 }
 
@@ -176,7 +232,37 @@ export async function addToMyProgram(pres: Presentation) {
         where: {
             userId: user.id,
         },
+        include: {
+            presentations: {
+                where: {
+                    id: pres.id,
+                },
+                include: {
+                    room: true,
+                },
+            },
+        },
     });
+
+    const numberOfAttendees = await prisma.program.count({
+        where: {
+            presentations: {
+                some: {
+                    id: pres.id,
+                },
+            },
+        },
+    });
+
+    if (!program?.presentations || program.presentations[0].room === null) {
+        console.error("Invalid program or missing room");
+        return null;
+    }
+
+    if (numberOfAttendees >= program.presentations[0].room.capacity) {
+        console.error("Room is full");
+        return null;
+    }
 
     if (program) {
         const updateProgram = await prisma.program.update({

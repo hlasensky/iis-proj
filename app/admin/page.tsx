@@ -9,6 +9,7 @@ import { getSessionUser } from "@/actions/actions";
 import { orderColumns } from "@/components/userTable/OrderColumns";
 import { presentationsColumns } from "@/components/userTable/PresentationsColumns";
 import { conferenceColumns } from "@/components/userTable/ConferenceColumns";
+import { roomColumns } from "@/components/userTable/RoomColumns";
 
 async function Page() {
     const sessionUser = await getSessionUser();
@@ -32,17 +33,22 @@ async function Page() {
         },
     });
     const conferences = await prisma.conference.findMany();
+    const rooms = await prisma.room.findMany();
 
     return (
         <section className="container mx-auto py-10 grid gap-7">
-            <h2 className="text-xl">Conferences</h2>
-            <DataTable columns={conferenceColumns} data={conferences} />
+
             <h2 className="text-xl">Orders</h2>
             <DataTable columns={orderColumns} data={orders} />
             <h2 className="text-xl">Users</h2>
             <DataTable columns={columns} data={users} />
+            <h2 className="text-xl">Conferences</h2>
+            <DataTable columns={conferenceColumns} data={conferences} />
             <h2 className="text-xl">Presentations</h2>
             <DataTable columns={presentationsColumns} data={presentations} />
+            <h2 className="text-xl">Rooms</h2>
+            <DataTable columns={roomColumns} data={rooms} />
+
         </section>
     );
 }
