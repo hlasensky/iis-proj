@@ -1,4 +1,4 @@
-import { Conference, Order } from "@prisma/client";
+import { Conference } from "@prisma/client";
 import React from "react";
 import ConferencesButtons from "@/components/root/ConferencesButtons";
 import {
