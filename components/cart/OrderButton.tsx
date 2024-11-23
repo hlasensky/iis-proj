@@ -37,6 +37,7 @@ function OrderButton() {
                     toast.success("Order succesful");
                     setCart([]);
                 }
+                setLoading(false);
             }}
         >
             {loading ? <Loader2 className="animate-spin" /> : "Order"}
