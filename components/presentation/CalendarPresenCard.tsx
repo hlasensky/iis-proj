@@ -12,8 +12,9 @@ import {
     removeFromMyProgram,
 } from "@/actions/presentationActions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
-function CalendarPresenCard({
+export default function CalendarPresenCard({
     presentation,
     rowStart,
     rowSpan,
@@ -30,6 +31,7 @@ function CalendarPresenCard({
     isProgram?: boolean;
 }) {
     const [selected, setSelected] = useAtom(selectedPresentationAtom);
+    const router = useRouter();
 
     return (
         <Card
@@ -70,8 +72,9 @@ function CalendarPresenCard({
                                 const res = await addToMyProgram(presentation);
                                 if (res === 200) {
                                     toast.success("Successfully added");
+                                    router.refresh()
                                 } else {
-                                    toast.error("Failed to add");
+                                    toast.error(res);
                                 }
                             } else {
                                 // Handle removing from the program
@@ -80,6 +83,7 @@ function CalendarPresenCard({
                                 );
                                 if (res === 200) {
                                     toast.success("Successfully removed");
+                                    router.refresh()
                                 } else {
                                     toast.error("Failed to remove");
                                 }
@@ -94,4 +98,3 @@ function CalendarPresenCard({
     );
 }
 
-export default CalendarPresenCard;

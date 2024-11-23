@@ -9,6 +9,7 @@ import { z } from "zod";
 import { getConferences } from "./conferenceActions";
 import { Conference, Room } from "@prisma/client";
 import { Presentation } from "@prisma/client";
+import { revalidatePath } from "next/cache";
 
 export async function createPresentation(
     values: z.infer<typeof formPresSchema>,
@@ -223,16 +224,18 @@ export async function editPresentation(
     return null;
 }
 
-export async function addToMyProgram(pres: Presentation) {
+export async function addToMyProgram(
+    pres: Presentation,
+): Promise<200 | string> {
     const user = await getSessionUser();
     if (!user) {
-        return null;
+        return "User not found";
     }
 
     let program = await prisma.program.findUnique({
         where: {
             userId: user.id,
-        }
+        },
     });
 
     if (!program) {
@@ -264,17 +267,17 @@ export async function addToMyProgram(pres: Presentation) {
 
     if (!presentation) {
         console.error("Invalid presentation");
-        return null;
+        return "Invalid presentation";
     }
 
     if (presentation.room === null) {
         console.error("Presentation has no room");
-        return null;
+        return "Presentation has no room";
     }
 
     if (numberOfAttendees >= presentation.room.capacity) {
         console.error("Room is full");
-        return null;
+        return "Room is full";
     }
 
     const updateProgram = await prisma.program.update({
@@ -289,8 +292,11 @@ export async function addToMyProgram(pres: Presentation) {
             },
         },
     });
-    if (updateProgram) return 200;
-    return null;
+    if (updateProgram) {
+        revalidatePath("/program");
+        return 200;
+    }
+    return "Failed to add to program";
 }
 export async function removeFromMyProgram(pres: Presentation) {
     const user = await getSessionUser();
@@ -317,7 +323,10 @@ export async function removeFromMyProgram(pres: Presentation) {
                 },
             },
         });
-        if (updateProgram) return 200;
+        if (updateProgram) {
+            revalidatePath("/program");
+            return 200;
+        }
         return null;
     }
 }
