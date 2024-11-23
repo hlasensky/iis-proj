@@ -1,10 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html lang="cs" >
+<html lang="cs">
     <head>
-        <meta
-            http-equiv="content-type"
-            content="text/html; charset=utf-8"
-        />
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
         <title>Projekt IIS</title>
         <style type="text/css">
             table {
@@ -105,52 +102,69 @@
             projektu (např. PHP skripty) implementují jednotlivé případy
             použití. -->
 
-            Implementace systému je upravené architektury MVC za pomocí Next.js, PostgreSQL databáze a Prisma ORM. Jednotlivé případy užití jsou implementovány v "server actions" ve složce "actions/". Server actions jsou funkce, které se chovají podobně jako API endpoints a jsou volány z frontendu. Každý jednotlivý případ užití má svuj vlastní soubor, tento soubor obsahuje funkce, které jsou nějak spojeny s tímto případem užití. Například případ vytvoření uživatelského účtu je v souboru "actions/accountActions.ts" a obsahuje funkci "createAccount". Tato funkce je volána z frontendu a vytváří nový uživatelský účet v databázi.
-            
-            <h3>Příklad implementace</h3>
+            Implementace systému je upravené architektury MVC za pomocí Next.js,
+            PostgreSQL databáze a Prisma ORM. Jednotlivé případy užití jsou
+            implementovány v "server actions" ve složce "actions/". Server
+            actions jsou funkce, které se chovají podobně jako API endpoints a
+            jsou volány z frontendu. Každý jednotlivý případ užití má svuj
+            vlastní soubor, tento soubor obsahuje funkce, které jsou nějak
+            spojeny s tímto případem užití. Například případ vytvoření
+            uživatelského účtu je v souboru "actions/accountActions.ts" a
+            obsahuje funkci "createAccount". Tato funkce je volána z frontendu a
+            vytváří nový uživatelský účet v databázi. <br /><br />
+            Přesněji jsou server actions popsány v dokumentaci Next.js a
+            React.js na adrese
+            <a
+                href="https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+                >Next.js doc</a
+            >. Hezký příklad implementace prezentací je v souboru
+            "actions/presentationActions.ts", kde je možné vytvářet, upravovat a
+            mazat prezentace. Tento soubor obsahuje funkce "createPresentation",
+            "getPresentations", "getUserPresentations",
+            "getCreatorPresentations", "deletePresentation" a další. V těchto
+            funkcích se nachází logika pro práci s databází, serverové ověřování
+            uživatele, ověřování dat error handling a revalidace dat.
+
             <pre>
-                <code lang="js">
-                export async function createAccount(formData: z.infer<typeof createAccountSchema>) {
-                    try {
-                        const parsedData = createAccountSchema.safeParse({
-                            email: formData.email,
-                            password: formData.password,
-                            name: formData.name,
-                            address: formData.address,
-                            city: formData.city,
-                            country: formData.country,
-                            zip: formData.zip,
-                        });
-                
-                        if (!parsedData.success) {
-                            console.error(parsedData.error);
+                <code>
+                    export async function createPresentation(
+                        values: z.infer&lt;typeof formPresSchema&gt;,
+                    ) {
+                        const user = await getSessionUser(); // action která vrátí aktuálního uživatele za pomoci session
+
+                        if (!user) {
                             return null;
                         }
-                        const hashedPassword = await hashPassword(formData.password);
-                        const data = await prisma.users.create({
+
+                        const conference = (await getConferences(values.conference)) as Conference; // action která vrátí konferenci podle id conference z dat prezentace
+                        if (!conference) {
+                            return null;
+                        }
+
+                        // vytvoření prezentace za pomoci prisma create
+                        const presentation = await prisma.presentation.create({
                             data: {
-                                email: formData.email,
-                                password: hashedPassword,
-                                name: formData.name,
-                                address: formData.address,
-                                city: formData.city,
-                                country: formData.country,
-                                zip: formData.zip,
+                                name: values.name,
+                                description: values.desc,
+                                content: values.content,
+                                conferenceId: values.conference,
+                                evaluated: null,
+                                creatorId: user?.id,
+                                start: conference.startTime,
+                                end: new Date(
+                                    new Date(conference.startTime).getTime() + 1 * 60 * 60 * 1000,
+                                ).toISOString(),
                             },
                         });
-                
-                        if (data) {
+
+                        if (presentation) {
+                            revalidatePath("/presentations"); // revalidace dat na stránce /presentations
                             return 200;
                         }
                         return null;
-                    } catch (error) {
-                        console.error(error);
-                        return null;
                     }
-                }
-            </code>
-        </pre>
-    
+                </code>
+            </pre>
         </p>
 
         <h3>Databáze</h3>
@@ -161,31 +175,49 @@
 
         Stručně popište:
         <ul>
-            <li>Jako první si vytvoříme klon github repositáře <a href="https://github.com/hlasensky/iis-proj.git">https://github.com/hlasensky/iis-proj.git</a>, poté přejdeme do tohoto adresáře a vložíme do něj ".env" soubor. Následně zadáme příkazy: 
+            <li>
+                Jako první si vytvoříme klon github repositáře
+                <a href="https://github.com/hlasensky/iis-proj.git"
+                    >https://github.com/hlasensky/iis-proj.git</a
+                >, poté přejdeme do tohoto adresáře a vložíme do něj ".env"
+                soubor. Následně zadáme příkazy:
                 <ul>
-                    <li><code>pnpm install</code> - tento příkaz nainstaluje všechny potřebné balíčky</li>
-                    <li><code>pnpm run dev</code> - tento příkaz spustí server na localhost:3000 určený pro development (při prvním použítí je důležíté před tímto příkazem zadat <code>pnpx prisma generate</code> pro inicializaci ORM)</li>
-                    <li><code>pnpm run build</code> - tento příkaz vytvoří produkční build aplikace</li>
-                    <li><code>pnpm run start</code> - tento příkaz spustí server na localhost:3000 určený pro produkci</li>
+                    <li>
+                        <code>pnpm install</code> - tento příkaz nainstaluje
+                        všechny potřebné balíčky
+                    </li>
+                    <li>
+                        <code>pnpm run dev</code> - tento příkaz spustí server
+                        na localhost:3000 určený pro development (při prvním
+                        použítí je důležíté před tímto příkazem zadat
+                        <code>pnpx prisma generate</code> pro inicializaci ORM)
+                    </li>
+                    <li>
+                        <code>pnpm run build</code> - tento příkaz vytvoří
+                        produkční build aplikace
+                    </li>
+                    <li>
+                        <code>pnpm run start</code> - tento příkaz spustí server
+                        na localhost:3000 určený pro produkci
+                    </li>
                 </ul>
-            
-            
             </li>
-            <li>Požadavky na běhové prostředí
+            <li>
+                Požadavky na běhové prostředí
                 <ul>
                     <li>Node.js 18.18 nebo pozdější</li>
                     <li>PNPM</li>
                 </ul>
             </li>
-            <li>Databáze je hostována u poskytovatele Supabase, jde zobrazit za pomoci Prismy příkazem <code>pnpx prisma studio</code></li>
+            <li>
+                Databáze je hostována u poskytovatele Supabase, jde zobrazit za
+                pomoci Prismy příkazem <code>pnpx prisma studio</code>
+            </li>
         </ul>
 
         <h2>Známé problémy</h2>
         <p>
-            Zde popište, které body zadání nejsou implementovány a z jakého
-            důvodu. Např. &bdquo;Z časových důvodů nebyla implementována správa
-            uživatelů.&rdquo; Pomůžete tím zrychlit hodnocení, když
-            neimplementované funkce nebudeme muset dlouze hledat.
+            Není implementována možnost rezervace lístků na konferenci
         </p>
     </body>
 </html>

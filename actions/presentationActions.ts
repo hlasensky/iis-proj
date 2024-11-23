@@ -1,5 +1,4 @@
 "use server";
-"use server";
 
 import { prisma } from "@/lib/prisma";
 
@@ -10,6 +9,7 @@ import { getConferences } from "./conferenceActions";
 import { Conference, Room } from "@prisma/client";
 import { Presentation } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { UserProgram } from "@/lib/types";
 
 export async function createPresentation(
     values: z.infer<typeof formPresSchema>,
@@ -301,6 +301,7 @@ export async function addToMyProgram(
     }
     return "Failed to add to program";
 }
+
 export async function removeFromMyProgram(pres: Presentation) {
     const user = await getSessionUser();
     if (!user) {
@@ -333,12 +334,6 @@ export async function removeFromMyProgram(pres: Presentation) {
         return null;
     }
 }
-
-export type UserProgram = {
-    presentations: (Presentation & { room: Room | null } & {
-        creator: { name: string | null };
-    })[];
-} | null;
 
 export async function GetMyProgram(conferenceId: string): Promise<UserProgram> {
     const user = await getSessionUser();
