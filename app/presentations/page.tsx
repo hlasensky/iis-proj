@@ -15,7 +15,7 @@ async function Presantations() {
     const session = await getServerSession(authOptions);
 
     if (!session) {
-        redirect("/");
+        redirect("/auth/signin");
     }
 
     const creatorPres = await getCreatorPresentations();
