@@ -92,6 +92,7 @@ export async function getUserConferences() {
                     id: user?.id,
                 },
             },
+            paymentStatus: true,
         },
         include: {
             conference: true,
