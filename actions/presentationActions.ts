@@ -37,7 +37,10 @@ export async function createPresentation(
         },
     });
 
-    if (presentation) return 200;
+    if (presentation) {
+        revalidatePath("/presentations");
+        return 200;
+    }
     return null;
 }
 

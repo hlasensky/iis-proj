@@ -1,10 +1,10 @@
 "use client";
 
 import {
-    AlignEndVerticalIcon,
     HomeIcon,
-    LayoutDashboard,
     LogIn,
+    MonitorPlay,
+    Presentation,
     Settings,
     UserRoundPlus,
 } from "lucide-react";
@@ -90,9 +90,9 @@ export function NavbarMinimal({
 
     const mockdata = [
         { icon: HomeIcon, label: "Home", url: "/" },
-        { icon: LayoutDashboard, label: "Conferences", url: "/conferences" },
+        { icon: MonitorPlay, label: "Conferences", url: "/conferences" },
         {
-            icon: AlignEndVerticalIcon,
+            icon: Presentation,
             label: "Presentations",
             url: "/presentations",
         },

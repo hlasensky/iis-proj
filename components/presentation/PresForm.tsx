@@ -38,6 +38,7 @@ import {
 import { useAtom } from "jotai";
 import {  openPopupAtom } from "@/app/userAtom";
 import { Presentation } from "@prisma/client";
+import { useRouter } from "next/navigation";
 
 export const formPresSchema = z.object({
     name: z.string().min(2, {
@@ -76,6 +77,7 @@ export function PresForm({
     setOpenEdit,
 }: PresFormProps) {
     const schema = edit ? formPresEditSchema : formPresSchema;
+    const router = useRouter();
 
     const form = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
@@ -135,6 +137,7 @@ export function PresForm({
                 setOpenPopup(false);
                 setOpenEdit(false);
                 // window.location.reload();
+                router.refresh();
                 toast.success("prezentace uspesne vytvorena");
             } else {
                 console.log("Form Error!");

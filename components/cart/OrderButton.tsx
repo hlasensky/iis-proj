@@ -32,9 +32,9 @@ function OrderButton() {
                     })),
                 );
                 if (res.some((item) => item.status === 500))
-                    toast.error("Order unsuccesful");
+                    toast.error("Order unsuccessful");
                 else {
-                    toast.success("Order succesful");
+                    toast.success("Order successful");
                     setCart([]);
                 }
                 setLoading(false);

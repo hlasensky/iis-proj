@@ -17,6 +17,8 @@ import { Input } from "../ui/input";
 import { useRouter } from "next/navigation";
 import { getRooms } from "@/actions/conferenceActions";
 import { Room } from "@prisma/client";
+import { openPopupAtom } from "@/app/userAtom";
+import { useAtom } from "jotai";
 
 export const formRoomSchema = z.array(
     z.object({
@@ -56,6 +58,7 @@ function RoomForm({
     const router = useRouter();
     const [newRooms, setNewRooms] = React.useState<Item[]>([]);
     const [editRooms, setEditRooms] = React.useState<Item[]>([]);
+    const [, setOpenPopup] = useAtom(openPopupAtom);
 
     useEffect(() => {
         if (editID) {
@@ -69,6 +72,7 @@ function RoomForm({
                         res.map((room) => ({
                             ...room,
                             capacity: room.capacity.toString(),
+                            conferenceId: room.conferenceId || "",
                         })),
                     );
                 }
@@ -153,6 +157,7 @@ function RoomForm({
                 roomForm.reset();
                 roomForm.clearErrors();
                 setStep(true);
+                setOpenPopup(false);
             } else {
                 if (statusOld !== 200) {
                     console.error("Error updating rooms");

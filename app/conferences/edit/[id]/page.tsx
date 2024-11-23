@@ -57,6 +57,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
                 </TabsList>
                 <TabsContent value="editConf" className="w-full">
                     <ConfForm
+                        
                         editID={conference.id}
                         defaultValues={{
                             name: conference.name,
