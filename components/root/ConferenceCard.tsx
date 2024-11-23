@@ -13,7 +13,7 @@ async function ConferenceCard({
     conference,
     capacityObj,
 }: {
-    conference: Conference & { orders: Order[] };
+    conference: Conference & { orders: { numberOfTickets: number }[] };
     capacityObj: {
         takenNmOfTickets: number;
         freeNmOfTickets: number;

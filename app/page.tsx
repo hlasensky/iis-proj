@@ -14,7 +14,11 @@ export default async function Home() {
                 startTime: "asc",
             },
             include: {
-                orders: true,
+                orders: {
+                    select: {
+                        numberOfTickets: true,
+                    },
+                },
             },
         });
 
