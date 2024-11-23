@@ -92,7 +92,7 @@ export function SignInForm({ csrfToken }: { csrfToken: string }): JSX.Element {
                             )}
                         />
                         <Button className="mt-4" type="submit">
-                            Submit
+                            {!loading ? "Submit" : <Loader2 className="animate-spin" />}
                         </Button>
                     </div>
                     <div className="h-[2px] bg-slate-300 rounded relative">
@@ -105,7 +105,7 @@ export function SignInForm({ csrfToken }: { csrfToken: string }): JSX.Element {
                         type="button"
                         className="mx-auto"
                         onClick={() =>
-                            !loading ? router.push("/auth/register") : null
+                            router.push("/auth/register")
                         }
                     >
                         {loading ? (
