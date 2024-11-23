@@ -232,41 +232,17 @@ export async function addToMyProgram(pres: Presentation) {
     let program = await prisma.program.findUnique({
         where: {
             userId: user.id,
-        },
-        include: {
-            presentations: {
-                where: {
-                    id: pres.id,
-                },
-                include: {
-                    room: true,
-                },
-            },
-        },
+        }
     });
 
     if (!program) {
-        await prisma.program.create({
+        program = await prisma.program.create({
             data: {
                 userId: user.id,
             },
         });
-        program = await prisma.program.findUnique({
-            where: {
-                userId: user.id,
-            },
-            include: {
-                presentations: {
-                    where: {
-                        id: pres.id,
-                    },
-                    include: {
-                        room: true,
-                    },
-                },
-            },
-        });
     }
+
     const numberOfAttendees = await prisma.program.count({
         where: {
             presentations: {
@@ -277,14 +253,26 @@ export async function addToMyProgram(pres: Presentation) {
         },
     });
 
-    console.log(program, numberOfAttendees);
+    const presentation = await prisma.presentation.findUnique({
+        where: {
+            id: pres.id,
+        },
+        include: {
+            room: true,
+        },
+    });
 
-    if (!program?.presentations[0] || program.presentations[0].room === null) {
-        console.error("Invalid program or missing room");
+    if (!presentation) {
+        console.error("Invalid presentation");
         return null;
     }
 
-    if (numberOfAttendees >= program.presentations[0].room.capacity) {
+    if (presentation.room === null) {
+        console.error("Presentation has no room");
+        return null;
+    }
+
+    if (numberOfAttendees >= presentation.room.capacity) {
         console.error("Room is full");
         return null;
     }

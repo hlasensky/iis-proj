@@ -59,7 +59,7 @@ function CalendarPresenCard({
                         </p>
                         <p>{presentation.creator?.name}</p>
                         <p>{presentation.room?.name}</p>
-                        <p>{presentation.room?.capacity}</p>
+                        <p>Capacity: {presentation.room?.capacity}</p>
                     </PopoverContent>
                 </Popover>
                 {isProgram !== undefined && (
